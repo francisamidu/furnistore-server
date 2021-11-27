@@ -1,7 +1,7 @@
 const { model, Schema, Types } = require("mongoose");
 
 const ProductSchema = new Schema({
-  title: {
+  color: {
     type: String,
     required: true,
   },
@@ -9,13 +9,22 @@ const ProductSchema = new Schema({
     type: String,
     required: true,
   },
-  price: {
+  size: {
     type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
     required: true,
   },
   quantity: {
     type: String,
     required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+    unique: true,
   },
   categories: [
     {
@@ -24,6 +33,11 @@ const ProductSchema = new Schema({
       required: false,
     },
   ],
+  isDeleted: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 module.exports = model("product", ProductSchema);

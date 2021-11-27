@@ -5,6 +5,11 @@ const CategorySchema = new Schema({
     type: String,
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   products: [
     {
       type: Types.ObjectId,

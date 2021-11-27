@@ -12,6 +12,11 @@ const UserSchema = new Schema(
       required: false,
       default: false,
     },
+    isDeleted: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     avatar: {
       type: String,
       required: false,
@@ -19,6 +24,7 @@ const UserSchema = new Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     password: {
       type: String,

@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const { AES, enc } = require("crypto-js");
 
 //Database models
 const User = require("../db/models/User");
@@ -6,6 +7,7 @@ const Token = require("../db/models/Token");
 
 //Auth Utilities
 const comparePassword = require("../utils/comparePassword");
+const decryptPassword = require("../utils/decryptPassword");
 const signJwt = require("../utils/signJwt");
 
 //Logs in user and creates a session
@@ -28,8 +30,11 @@ const loginHandler = async (req, res) => {
       return res.status(404).json({ message: "No user found", success: false });
     }
 
+    //Decrypt password
+    const decryptedPassword = decryptPassword(user.password);
+
     //Compare password and send back response message
-    const isPasswordMatching = comparePassword(password, user.password);
+    const isPasswordMatching = comparePassword(password, decryptedPassword);
     if (!isPasswordMatching) {
       return res
         .status(403)
@@ -39,7 +44,7 @@ const loginHandler = async (req, res) => {
     //Sign JWT
     const accessToken = await signJwt({
       _id: user._id,
-      email: user.email,
+      isAdmin: user.isAdmin,
     });
     const refreshToken = await signJwt(
       {
