@@ -1,17 +1,16 @@
 const { validationResult } = require("express-validator");
-const { AES, enc } = require("crypto-js");
 
 //Database models
 const User = require("../db/models/User");
 const Token = require("../db/models/Token");
 
 //Auth Utilities
-const comparePassword = require("../utils/comparePassword");
-const decryptPassword = require("../utils/decryptPassword");
-const signJwt = require("../utils/signJwt");
+const comparePassword = require("../helpers/comparePassword");
+const decryptPassword = require("../helpers/decryptPassword");
+const signJwt = require("../helpers/signJwt");
 
-//Logs in user and creates a session
-const loginHandler = async (req, res) => {
+//Logs in user and creates a new session
+const loginService = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -29,11 +28,14 @@ const loginHandler = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "No user found", success: false });
     }
-
-    //Decrypt password
-    const decryptedPassword = decryptPassword(user.password);
-
+    const { isAdmin, isVerified } = user;
+    if (!isVerified) {
+      return res
+        .status(401)
+        .json({ message: "Account verification required", success: false });
+    }
     //Compare password and send back response message
+    const decryptedPassword = decryptPassword(user.password);
     const isPasswordMatching = comparePassword(password, decryptedPassword);
     if (!isPasswordMatching) {
       return res
@@ -44,7 +46,7 @@ const loginHandler = async (req, res) => {
     //Sign JWT
     const accessToken = await signJwt({
       _id: user._id,
-      isAdmin: user.isAdmin,
+      isAdmin,
     });
     const refreshToken = await signJwt(
       {
@@ -64,13 +66,13 @@ const loginHandler = async (req, res) => {
     //Set access token cookie
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      maxAge: 36000000,
+      maxAge: 36000000, // 1hr expiry
     });
 
     //Set refresh token cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      maxAge: 86400000,
+      maxAge: 86400000, // 1 day expiry
     });
 
     return res.json({
@@ -78,7 +80,8 @@ const loginHandler = async (req, res) => {
       success: true,
       user: {
         _id: user._id,
-        email: user.email,
+        isAdmin,
+        isVerified,
       },
     });
   } catch (error) {
@@ -90,4 +93,4 @@ const loginHandler = async (req, res) => {
   }
 };
 
-module.exports = loginHandler;
+module.exports = loginService;

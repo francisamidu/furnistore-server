@@ -68,11 +68,15 @@ const getUsers = async (context, req) => {
 };
 
 // Deletes a single user
+const deleteUser = async ({ userId }, req) => {};
 
 // Updates a single user
+const updateUser = async ({ userId, userInput }, req) => {};
 
 module.exports = {
+  deleteUser,
   getUser,
   getUsers,
   getUserStats,
+  updateUser,
 };

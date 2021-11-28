@@ -26,13 +26,9 @@ const ProductSchema = new Schema({
     required: true,
     unique: true,
   },
-  categories: [
-    {
-      type: Types.ObjectId,
-      ref: "product",
-      required: false,
-    },
-  ],
+  categories: {
+    type: Array,
+  },
   isDeleted: {
     type: Boolean,
     required: false,

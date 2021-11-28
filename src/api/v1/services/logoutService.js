@@ -2,7 +2,7 @@
 const Token = require("../db/models/Token");
 
 //Logs out current user and deletes their session
-const logoutHandler = async (req, res) => {
+const logoutServices = async (req, res) => {
   try {
     const { accessToken, refreshToken } = req.body;
     const storedRefreshToken = await Token.findOne({ token: refreshToken });
@@ -36,4 +36,4 @@ const logoutHandler = async (req, res) => {
   }
 };
 
-module.exports = logoutHandler;
+module.exports = logoutServices;

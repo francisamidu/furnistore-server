@@ -5,16 +5,17 @@ const { connect } = require("mongoose");
 const path = require("path");
 
 //Middlewares
-const authenticate = require("./middlewares/authenticate");
-const graphql = require("./middlewares/graphql");
+const authenticate = require("./api/v1/middlewares/authenticate");
+const graphql = require("./api/v1/middlewares/graphql");
 
 //Routes
-const auth = require("./routes/auth/index");
-const api = require("./routes/api/index");
+const auth = require("./api/v1/routes/auth");
+const api = require("./api/v1/routes/api");
 
+//Port config
 const PORT = process.env.PORT || 5000;
 
-//Env configuration
+//Env config
 require("dotenv").config();
 
 //Init server app

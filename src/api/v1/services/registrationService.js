@@ -5,11 +5,11 @@ const VerificationToken = require("../db/models/OTP");
 const User = require("../db/models/User");
 
 //Auth Utilities
-const generateOTP = require("../utils/generateOTP");
-const hashValue = require("../utils/hashValue");
+const generateOTP = require("../helpers/generateOTP");
+const hashValue = require("../helpers/hashValue");
 
 //New user account registration
-const registrationHandler = async (req, res) => {
+const registrationService = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -59,4 +59,4 @@ const registrationHandler = async (req, res) => {
   }
 };
 
-module.exports = registrationHandler;
+module.exports = registrationService;

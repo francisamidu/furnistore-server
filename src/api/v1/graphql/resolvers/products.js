@@ -30,6 +30,43 @@ const getProducts = async (context, req) => {
   }
 };
 
+// Gets products by categories
+const getProductsByCategories = async ({ categories }, req) => {
+  console.log(context);
+  try {
+    const result = await Product.find({
+      isDeleted: false,
+      categories: { $in: [categories] },
+    });
+    const products = result.map((product) => ({
+      _id: product._id.toString(),
+      ...product._doc,
+    }));
+    return { products };
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Gets new Products
+const getProductsByCategories = async ({ categories }, req) => {
+  console.log(context);
+  try {
+    const result = await Product.find({
+      isDeleted: false,
+    })
+      .sort({ createdAt: -1 })
+      .limit(10);
+    const products = result.map((product) => ({
+      _id: product._id.toString(),
+      ...product._doc,
+    }));
+    return { products };
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Gets product statistics
 const getProductStats = (context, req) => {
   const date = new Date();
@@ -116,5 +153,6 @@ module.exports = {
   getProduct,
   getProducts,
   getProductStats,
+  getProductsByCategories,
   updateProduct,
 };

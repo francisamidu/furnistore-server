@@ -18,7 +18,7 @@ module.exports = buildSchema(`
     type Product{
         _id: ID!
         color: String
-        categories: [Category]
+        categories: [String]
         description: String
         image: String
         price: String
@@ -103,13 +103,18 @@ module.exports = buildSchema(`
         updateUser(userId,user: UserInput): User!
     }
     type Query{
+        getIncome
+
         getCart(cartId:ID!): Cart
         getCategory(categoryId:ID!): Category
         getProduct(productId:ID!): Product
         getOrder(orderId:ID!): Order
         getUser(userId: ID): User
         
-        getProductByCategory(categoryId: ID!): [Product]
+        getOrderByUser(userId:ID!): Order
+        getOrdersByUser(userId:ID!): [Order]
+        getProductsByCategories(categories: [String]): [Product]
+        getNewProducts: [Product]
         
         getCarts: [Cart]
         getCategories: [Category]
