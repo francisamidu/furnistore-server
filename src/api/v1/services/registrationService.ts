@@ -2,12 +2,10 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 
 //Database models
-import VerificationToken from "../db/models/OTP";
-import User from "../db/models/User";
+import { OTP, User } from "../db/models";
 
 //Auth Utilities
-import generateOTP from "../helpers/generateOTP";
-import hashValue from "../helpers/hashValue";
+import { generateOTP, hashValue } from "../helpers";
 
 //New user account registration
 const registrationService = async (req: Request, res: Response) => {
@@ -42,7 +40,7 @@ const registrationService = async (req: Request, res: Response) => {
     password: hashedPassword,
   });
   await newUser.save();
-  const verificationToken = new VerificationToken({
+  const verificationToken = new OTP({
     token: generateOTP(),
   });
   await verificationToken.save();

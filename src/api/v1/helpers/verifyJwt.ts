@@ -8,6 +8,11 @@ export default async function (token: any) {
     );
     return { payload: isValidToken, expired: false };
   } catch (error: any) {
-    return { payload: null, expired: error.message.includes("jwt expired") };
+    return {
+      payload: null,
+      expired:
+        error.message.includes("jwt expired") ||
+        error.message.includes("jwt must be provided"),
+    };
   }
 }

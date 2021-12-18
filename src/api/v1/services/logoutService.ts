@@ -1,6 +1,6 @@
 //Database models
 import { Request, Response } from "express";
-import Token from "../db/models/Token";
+import { Token } from "../db/models";
 
 //Logs out current user and deletes their session
 const logoutService = async (req: Request, res: Response) => {
@@ -15,17 +15,6 @@ const logoutService = async (req: Request, res: Response) => {
   await Token.findOneAndDelete({ token: accessToken });
   await Token.findOneAndDelete({ token: refreshToken });
 
-  //Revoke access token cookie
-  res.cookie("accessToken", "", {
-    httpOnly: true,
-    maxAge: 0,
-  });
-
-  //Revoke refresh token cookie
-  res.cookie("refreshToken", "", {
-    httpOnly: true,
-    maxAge: 0,
-  });
   return res.status(200).json({ message: "Logged out", success: true });
 };
 

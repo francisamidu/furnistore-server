@@ -19,7 +19,7 @@ const deleteCategory = async ({ categoryId }: any, req: Request) => {};
 // Updates a single category
 const updateCategory = async ({ categoryId }: any, req: Request) => {};
 
-export default {
+export {
   createCategory,
   deleteCategory,
   getCategory,

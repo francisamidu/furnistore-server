@@ -1,14 +1,15 @@
 //Required libraries
-const express = require("express");
-const cors = require("cors");
-const { connect } = require("mongoose");
-const path = require("path");
+import express, { json, static as expressStatic, urlencoded } from "express";
+import cors from "cors";
+import { connect } from "mongoose";
+import { join } from "path";
+import session from "express-session";
 
 //Middlewares
 import authenticate from "./api/v1/middlewares/authenticate";
 import graphql from "./api/v1/middlewares/graphql";
 import use from "./api/v1/middlewares/use";
-import errorHandler from "./api/v1/middlewares/errorHandler";
+import errorHandler from "./api/v1/middlewares/error-handler";
 
 //Routes
 import auth from "./api/v1/routes/auth";
@@ -31,15 +32,30 @@ app.use(
   })
 );
 
-//JSON,Form parsing and public path middlewares
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+//Session
+const sess = {
+  resave: false,
+  saveUninitialized: true,
+  secret: process.env.SECRET || "thisissonotrecommended",
+  cookie: { secure: false, maxAge: 60000 },
+};
+
+if (app.get("env") === "production") {
+  app.set("trust proxy", 1); // trust first proxy
+  sess.cookie.secure = true; // serve secure cookies
+}
+
+app.use(session(sess));
+
+//JSON,cookie,Form parsing and public path middlewares
+app.use(expressStatic(join(__dirname, "public")));
+app.use(json());
+app.use(urlencoded({ extended: false }));
 
 //API routes
 app.use("/auth", auth);
 // app.use("/api", [authenticate, api]);
-app.use("/graphql", [authenticate, use(graphql)]);
+app.use("/graphql", [use(authenticate), use(graphql)]);
 
 app.use(errorHandler);
 

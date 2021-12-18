@@ -1,4 +1,4 @@
-import { generate } from "otp-generator";
+const { generate } = require("otp-generator");
 
 export default () => {
   const token = generate(5, {

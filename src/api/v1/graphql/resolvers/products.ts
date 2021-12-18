@@ -13,8 +13,6 @@ const getProduct = async ({ productId }: any, req: Request) => {
 
 // Gets all products
 const getProducts = async (context: any, req: Request) => {
-  console.log(context);
-
   const result = await Product.find({ isDeleted: false }).populate(
     "categories"
   );
@@ -22,7 +20,7 @@ const getProducts = async (context: any, req: Request) => {
     _id: product._id.toString(),
     ...product._doc,
   }));
-  return { products };
+  return products;
 };
 
 // Gets products by categories
@@ -30,13 +28,13 @@ const getProductsByCategories = async (context: any, req: Request) => {
   console.log(context);
   const result = await Product.find({
     isDeleted: false,
-    categories: { $in: [categories] },
+    categories: { $in: ["categories"] },
   });
   const products = result.map((product) => ({
     _id: product._id.toString(),
     ...product._doc,
   }));
-  return { products };
+  return products;
 };
 
 // Gets new Products
@@ -51,7 +49,7 @@ const getNewProducts = async (context: any, req: Request) => {
     _id: product._id.toString(),
     ...product._doc,
   }));
-  return { products };
+  return products;
 };
 
 // Gets product statistics
@@ -86,7 +84,7 @@ const getProductStats = async (context: any, req: Request) => {
     _id: product._id.toString(),
     ...product._doc,
   }));
-  return { products };
+  return products;
 };
 
 // Creates a single product
@@ -121,7 +119,7 @@ const deleteProduct = async ({ productId }: any, req: Request) => {
 // Updates a single product
 const updateProduct = async ({}: any, req: Request) => {};
 
-export default {
+export {
   createProduct,
   deleteProduct,
   getProduct,

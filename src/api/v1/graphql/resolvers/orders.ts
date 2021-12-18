@@ -18,7 +18,7 @@ const getOrders = async (context: any, req: Request) => {
     _id: order._id.toString(),
     ...order._doc,
   }));
-  return { orders };
+  return orders;
 };
 
 // Gets single order by user
@@ -36,7 +36,7 @@ const getOrdersByUser = async ({ userId }: any, req: Request) => {
     _id: order._id.toString(),
     ...order._doc,
   }));
-  return { orders };
+  return orders;
 };
 
 // Gets order statistics
@@ -72,7 +72,7 @@ const getOrderStats = async (context: any, req: Request) => {
     _id: order._id.toString(),
     ...order._doc,
   }));
-  return { orders };
+  return orders;
 };
 
 // Creates a single order
@@ -84,7 +84,7 @@ const deleteOrder = async ({}: any, req: Request) => {};
 // Updates a single order
 const updateOrder = async ({}: any, req: Request) => {};
 
-export default {
+export {
   createOrder,
   deleteOrder,
   getOrder,

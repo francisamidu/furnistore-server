@@ -36,9 +36,7 @@ const getSales = async (context: any, req: Request) => {
     _id: res._id.toString(),
     ...res._doc,
   }));
-  return { sales };
+  return sales;
 };
 
-export default {
-  getSales,
-};
+export { getSales };

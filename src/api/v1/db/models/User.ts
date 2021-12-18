@@ -26,6 +26,15 @@ const UserSchema = new Schema(
       required: true,
       unique: true,
     },
+    gender: {
+      type: String,
+      required: false,
+      default: "Male",
+    },
+    name: {
+      type: String,
+      required: false,
+    },
     password: {
       type: String,
       required: true,

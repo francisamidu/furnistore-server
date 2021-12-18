@@ -21,10 +21,4 @@ const deleteCart = async (context: any, req: Request) => {};
 // Updates a single cart
 const updateCart = async (context: any, req: Request) => {};
 
-export default {
-  createCart,
-  deleteCart,
-  getCart,
-  getCarts,
-  updateCart,
-};
+export { createCart, deleteCart, getCart, getCarts, updateCart };

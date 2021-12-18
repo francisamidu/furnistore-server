@@ -35,7 +35,7 @@ const getUserStats = async (context: any, req: Request) => {
     _id: user._id.toString(),
     ...user._doc,
   }));
-  return { users };
+  return users;
 };
 
 // Gets a single User
@@ -54,7 +54,7 @@ const getUsers = async (context: any, req: Request) => {
     _id: user._id.toString(),
     ...user._doc,
   }));
-  return { users };
+  return users;
 };
 
 // Deletes a single user
@@ -63,10 +63,4 @@ const deleteUser = async ({ userId }: any, req: Request) => {};
 // Updates a single user
 const updateUser = async ({ userId, userInput }: any, req: Request) => {};
 
-export default {
-  deleteUser,
-  getUser,
-  getUsers,
-  getUserStats,
-  updateUser,
-};
+export { deleteUser, getUser, getUsers, getUserStats, updateUser };

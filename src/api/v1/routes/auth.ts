@@ -1,13 +1,22 @@
 const router = require("express").Router();
 
+import {
+  loginController,
+  logoutController,
+  registrationController,
+  resetPasswordController,
+  sendOTPController,
+  validateOTPController,
+} from "../controllers";
+
 import use from "../middlewares/use";
 
 // Register routes
-router.use("/login", use(require("../controllers/loginController")));
-router.use("/logout", use(require("../controllers/logoutController")));
-router.use(
-  "/register",
-  use(require("../../controllers/registerationController"))
-);
+router.use("/login", use(loginController));
+router.use("/logout", use(logoutController));
+router.use("/signup", use(registrationController));
+router.use("/send-otp", use(sendOTPController));
+router.use("/reset-password", use(resetPasswordController));
+router.user("/validate-otp", use(validateOTPController));
 
 export default router;

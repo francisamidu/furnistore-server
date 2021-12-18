@@ -57,7 +57,7 @@ export default buildSchema(`
         userId: ID!
         products: [Object]!
         amount: Int!
-        address: Address!
+        address: AddressInput!
     }
 
     type Address{
@@ -88,39 +88,39 @@ export default buildSchema(`
         createCategory: Category!
         createCart: Cart!
         createOrder: Order!
-        createProduct: Product!
+        createProduct: Product!        
 
         deleteCategory(categoryId: ID!): Category!
         deleteCart(cartId: ID!): Cart!
         deleteOrder(orderId: ID!): Order!
-        deleteProduct(productId): Product!
-        deleteUser(userId): User!
+        deleteProduct(productId: ID!): Product!
+        deleteUser(userId: ID!): User!
 
         updateCategory(categoryId: ID!,title: String!): Category!
         updateCart(cartId: ID!): Cart!
         updateOrder(orderId: ID!): Order!
-        updateProduct(productId,product: ProductInput): Product!
-        updateUser(userId,user: UserInput): User!
+        updateProduct(productId: ID!,product: ProductInput): Product!
+        updateUser(userId: ID!,user: UserInput): User!
     }
     type Query{
-        getIncome
-
-        getCart(cartId:ID!): Cart
-        getCategory(categoryId:ID!): Category
-        getProduct(productId:ID!): Product
-        getOrder(orderId:ID!): Order
-        getUser(userId: ID): User
         
-        getOrderByUser(userId:ID!): Order
-        getOrdersByUser(userId:ID!): [Order]
-        getProductsByCategories(categories: [String]): [Product]
-        getNewProducts: [Product]
+        cart(cartId: ID!): Cart
+        category(categoryId: ID!): Category
+        product(productId: ID!): Product
+        order(orderId: ID!): Order
+        user(userId: ID!): User
         
-        getCarts: [Cart]
-        getCategories: [Category]
-        getProducts: [Product]
-        getOrders: [Order]
-        getUsers: [User]
+        orderByUser(userId: ID!): Order
+        ordersByUser(userId: ID!): [Order]
+        productsByCategories(categories: [String]): [Product]
+        newProducts: [Product]
+        
+        carts: [Cart]
+        categories: [Category]
+        products: [Product]
+        orders: [Order]
+        sales: [Object]
+        users: [User]
     }    
 
     schema {

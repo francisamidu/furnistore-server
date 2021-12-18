@@ -5,17 +5,11 @@ import {
   getCategories,
   getCategoryStats,
   updateCategory,
-} from "../resolvers/categories";
+} from "./categories";
 
-import {
-  createCart,
-  deleteCart,
-  getCart,
-  getCarts,
-  updateCart,
-} from "../resolvers/cart";
+import { createCart, deleteCart, getCart, getCarts, updateCart } from "./cart";
 
-import { getSales } from "../resolvers/Sales";
+import { getSales } from "./sales";
 
 import {
   createProduct,
@@ -25,7 +19,7 @@ import {
   getProductStats,
   getProductsByCategories,
   updateProduct,
-} from "../resolvers/products";
+} from "./products";
 
 import {
   createOrder,
@@ -36,7 +30,7 @@ import {
   getOrdersByUser,
   getOrderStats,
   updateOrder,
-} from "../resolvers/orders";
+} from "./orders";
 
 import {
   deleteUser,
@@ -44,7 +38,7 @@ import {
   getUsers,
   getUserStats,
   updateUser,
-} from "../resolvers/users";
+} from "./users";
 
 export default {
   category: getCategory,

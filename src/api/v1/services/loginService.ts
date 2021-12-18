@@ -1,18 +1,16 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import SessionRequest from "../interfaces/Session";
 
 import { validationResult } from "express-validator";
 
 //Database models
-import User from "../db/models/User";
-import Token from "../db/models/Token";
+import { Token, User } from "../db/models";
 
 //Auth Utilities
-import comparePassword from "../helpers/comparePassword";
-import decryptPassword from "../helpers/decryptPassword";
-import signJwt from "../helpers/signJwt";
+import { comparePassword, decryptPassword, signJwt } from "../helpers";
 
 //Logs in user and creates a new session
-const loginService = async (req: Request, res: Response) => {
+const loginService = async (req: SessionRequest, res: Response) => {
   const { email, password } = req.body;
 
   //Check for empty credentials and send back response message
@@ -45,6 +43,10 @@ const loginService = async (req: Request, res: Response) => {
   }
 
   //Sign JWT
+  req.session.user = {
+    _id: user._id,
+    isAdmin,
+  };
   const accessToken = await signJwt({
     _id: user._id,
     isAdmin,
@@ -58,23 +60,16 @@ const loginService = async (req: Request, res: Response) => {
 
   //Save token to the database
   const savedToken = new Token({
-    token: accessToken,
+    accessToken,
+    refreshToken,
   });
-  const refreshTokenObject = new Token({ token: refreshToken });
-  await refreshTokenObject.save();
   await savedToken.save();
 
-  //Set access token cookie
-  res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    maxAge: 36000000, // 1hr expiry
-  });
-
-  //Set refresh token cookie
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    maxAge: 86400000, // 1 day expiry
-  });
+  //Set Token headers
+  res.set("Access-Control-Expose-Headers", "x-auth-token");
+  res.set("Access-Control-Expose-Headers", "x-refresh-token");
+  res.set("x-auth-token", accessToken);
+  res.set("x-refresh-token", refreshToken);
 
   return res.json({
     message: "Login successful",

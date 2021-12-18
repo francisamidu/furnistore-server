@@ -1,5 +1,5 @@
 import User from "./models/User";
-import mongoose from "mongoose";
+import { connect, disconnect } from "mongoose";
 
 // Creates a test and admin account for testing purposes
 const seed = async () => {
@@ -18,10 +18,10 @@ const seed = async () => {
       });
       await newUser.save();
       console.log(`seeded test user account`);
-      mongoose.disconnect();
+      disconnect();
     } else {
       console.log("User account already exists");
-      mongoose.disconnect();
+      disconnect();
     }
 
     if (!isAdminAccountAlreadyCreated) {
@@ -32,14 +32,14 @@ const seed = async () => {
       });
       await newUser.save();
       console.log(`seeded test user account`);
-      mongoose.disconnect();
+      disconnect();
     } else {
       console.log("User account already exists");
-      mongoose.disconnect();
+      disconnect();
     }
   } catch (error) {
     console.log(`Seed failed:${error}`);
-    mongoose.disconnect();
+    disconnect();
   }
 };
 
@@ -54,10 +54,9 @@ async function runSeed() {
 }
 
 //Database connection
-mongoose
-  .connect("mongodb://localhost:27017/furnistore", {
-    autoIndex: true,
-  })
+connect("mongodb://localhost:27017/furnistore", {
+  autoIndex: true,
+})
   .then(() => {
     runSeed();
   })
