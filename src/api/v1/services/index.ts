@@ -1,3 +1,4 @@
+import imageUploadService from "./imageUploadService";
 import loginService from "./loginService";
 import logoutService from "./logoutService";
 import registrationService from "./registrationService";
@@ -6,6 +7,7 @@ import sendOTPService from "./sendOTPService";
 import validateOTPService from "./validateOTPService";
 
 export {
+  imageUploadService,
   loginService,
   logoutService,
   registrationService,

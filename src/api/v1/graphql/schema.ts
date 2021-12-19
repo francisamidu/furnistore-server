@@ -24,16 +24,17 @@ export default buildSchema(`
         price: String
         quantity: Int
         size: String
-        title: String
+        name: String
     }
     input ProductInput{
+        categories: [String]
         color: String!
         description: String!
         image: String!
         price: String!
         quantity: Int!
         size: String!
-        title: String!
+        name: String!
     }
 
     type Cart{

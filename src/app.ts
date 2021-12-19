@@ -6,10 +6,7 @@ import { join } from "path";
 import session from "express-session";
 
 //Middlewares
-import authenticate from "./api/v1/middlewares/authenticate";
-import graphql from "./api/v1/middlewares/graphql";
-import use from "./api/v1/middlewares/use";
-import errorHandler from "./api/v1/middlewares/error-handler";
+import { authenticate, graphql, errorHandler, use } from "./api/v1/middlewares";
 
 //Routes
 import auth from "./api/v1/routes/auth";

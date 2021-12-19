@@ -89,17 +89,18 @@ const getProductStats = async (context: any, req: Request) => {
 
 // Creates a single product
 const createProduct = async (
-  { color, description, image, price, quantity, size, title }: any,
+  { color, description, image, price, quantity, size, name, categories }: any,
   req: Request
 ) => {
   const newProduct = new Product({
+    categories,
     color,
     description,
+    name,
     image,
     price,
     quantity,
     size,
-    title,
   });
   await newProduct.save();
   return {
