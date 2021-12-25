@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const User_1 = __importDefault(require("./models/User"));
-const mongoose_1 = __importDefault(require("mongoose"));
+const mongoose_1 = require("mongoose");
 // Creates a test and admin account for testing purposes
 const seed = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -31,11 +31,11 @@ const seed = () => __awaiter(void 0, void 0, void 0, function* () {
             });
             yield newUser.save();
             console.log(`seeded test user account`);
-            mongoose_1.default.disconnect();
+            (0, mongoose_1.disconnect)();
         }
         else {
             console.log("User account already exists");
-            mongoose_1.default.disconnect();
+            (0, mongoose_1.disconnect)();
         }
         if (!isAdminAccountAlreadyCreated) {
             const newUser = new User_1.default({
@@ -45,16 +45,16 @@ const seed = () => __awaiter(void 0, void 0, void 0, function* () {
             });
             yield newUser.save();
             console.log(`seeded test user account`);
-            mongoose_1.default.disconnect();
+            (0, mongoose_1.disconnect)();
         }
         else {
             console.log("User account already exists");
-            mongoose_1.default.disconnect();
+            (0, mongoose_1.disconnect)();
         }
     }
     catch (error) {
         console.log(`Seed failed:${error}`);
-        mongoose_1.default.disconnect();
+        (0, mongoose_1.disconnect)();
     }
 });
 function runSeed() {
@@ -70,8 +70,7 @@ function runSeed() {
     });
 }
 //Database connection
-mongoose_1.default
-    .connect("mongodb://localhost:27017/furnistore", {
+(0, mongoose_1.connect)("mongodb://localhost:27017/furnistore", {
     autoIndex: true,
 })
     .then(() => {

@@ -76,13 +76,50 @@ const getOrderStats = async (context: any, req: Request) => {
 };
 
 // Creates a single order
-const createOrder = async ({}: any, req: Request) => {};
+const createOrder = async (
+  { userId, product, amount, address }: any,
+  req: Request
+) => {
+  const newOrder = new Order({
+    amount,
+    address,
+    product,
+    userId,
+  });
+  await newOrder.save();
+  return {
+    ...newOrder,
+    _id: newOrder._id.toString(),
+  };
+};
 
 // Deletes a single order
-const deleteOrder = async ({}: any, req: Request) => {};
+const deleteOrder = async ({ orderId }: any, req: Request) => {
+  const order = await Order.findById(orderId);
+  order.isDeleted = true;
+  await order.save();
+  return {
+    ...order,
+    _id: order._id.toString(),
+  };
+};
 
 // Updates a single order
-const updateOrder = async ({}: any, req: Request) => {};
+const updateOrder = async (
+  { orderId, orderInput: { userId, products, amount, address } }: any,
+  req: Request
+) => {
+  const order = await Order.findById(orderId);
+  order.userId = userId;
+  order.products = products;
+  order.amount = amount;
+  order.address = address;
+  await order.save();
+  return {
+    ...order,
+    _id: order._id.toString(),
+  };
+};
 
 export {
   createOrder,

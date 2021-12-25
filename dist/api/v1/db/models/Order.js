@@ -36,5 +36,7 @@ const OrderSchema = new mongoose_1.Schema({
         required: false,
         default: false,
     },
+}, {
+    timestamps: true,
 });
 exports.default = (0, mongoose_1.model)("order", OrderSchema);

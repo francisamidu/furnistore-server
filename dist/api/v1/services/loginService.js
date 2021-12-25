@@ -8,18 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
 //Database models
-const User_1 = __importDefault(require("../db/models/User"));
-const Token_1 = __importDefault(require("../db/models/Token"));
+const models_1 = require("../db/models");
 //Auth Utilities
-const comparePassword_1 = __importDefault(require("../helpers/comparePassword"));
-const decryptPassword_1 = __importDefault(require("../helpers/decryptPassword"));
-const signJwt_1 = __importDefault(require("../helpers/signJwt"));
+const helpers_1 = require("../helpers");
 //Logs in user and creates a new session
 const loginService = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
@@ -32,7 +26,7 @@ const loginService = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });
     }
     //Query the database for user and send back response message
-    const user = yield User_1.default.findOne({ email });
+    const user = yield models_1.User.findOne({ email });
     if (!user) {
         return res.status(404).json({ message: "No user found", success: false });
     }
@@ -43,37 +37,36 @@ const loginService = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             .json({ message: "Account verification required", success: false });
     }
     //Compare password and send back response message
-    const decryptedPassword = (0, decryptPassword_1.default)(user.password);
-    const isPasswordMatching = (0, comparePassword_1.default)(password, decryptedPassword);
+    const decryptedPassword = (0, helpers_1.decryptPassword)(user.password);
+    const isPasswordMatching = (0, helpers_1.comparePassword)(password, decryptedPassword);
     if (!isPasswordMatching) {
         return res
             .status(403)
             .json({ message: "Passwords do not match", success: false });
     }
     //Sign JWT
-    const accessToken = yield (0, signJwt_1.default)({
+    req.session.user = {
+        _id: user._id,
+        isAdmin,
+    };
+    const accessToken = yield (0, helpers_1.signJwt)({
         _id: user._id,
         isAdmin,
     });
-    const refreshToken = yield (0, signJwt_1.default)({
+    const refreshToken = yield (0, helpers_1.signJwt)({
         id: Date.now(),
     }, 3.154e10);
     //Save token to the database
-    const savedToken = new Token_1.default({
+    const savedToken = new models_1.Token({
         accessToken,
         refreshToken,
     });
     yield savedToken.save();
-    //Set access token cookie
-    res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        maxAge: 36000000, // 1hr expiry
-    });
-    //Set refresh token cookie
-    res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        maxAge: 86400000, // 1 day expiry
-    });
+    //Set Token headers
+    res.set("Access-Control-Expose-Headers", "x-auth-token");
+    res.set("Access-Control-Expose-Headers", "x-refresh-token");
+    res.set("x-auth-token", accessToken);
+    res.set("x-refresh-token", refreshToken);
     return res.json({
         message: "Login successful",
         success: true,

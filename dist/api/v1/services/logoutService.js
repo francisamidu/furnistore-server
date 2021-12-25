@@ -8,33 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const Token_1 = __importDefault(require("../db/models/Token"));
+const models_1 = require("../db/models");
 //Logs out current user and deletes their session
 const logoutService = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { accessToken, refreshToken } = req.body;
-    const storedRefreshToken = yield Token_1.default.findOne({ token: refreshToken });
+    const storedRefreshToken = yield models_1.Token.findOne({ token: refreshToken });
     if (!storedRefreshToken) {
         return res.status(400).json({
             message: "Logout failed. Please provide a valid refresh token",
             success: false,
         });
     }
-    yield Token_1.default.findOneAndDelete({ token: accessToken });
-    yield Token_1.default.findOneAndDelete({ token: refreshToken });
-    //Revoke access token cookie
-    res.cookie("accessToken", "", {
-        httpOnly: true,
-        maxAge: 0,
-    });
-    //Revoke refresh token cookie
-    res.cookie("refreshToken", "", {
-        httpOnly: true,
-        maxAge: 0,
-    });
+    yield models_1.Token.findOneAndDelete({ token: accessToken });
+    yield models_1.Token.findOneAndDelete({ token: refreshToken });
     return res.status(200).json({ message: "Logged out", success: true });
 });
 exports.default = logoutService;

@@ -1,6 +1,27 @@
 import { Request } from "express";
 
 import User from "../../db/models/User";
+import { hashValue } from "../../helpers";
+
+//Creates an individual user
+const createUser = async (
+  { user: { avatar, email, name, password, gender } }: any,
+  req: Request
+) => {
+  const hashedPassword = await hashValue(password);
+  const user = new User({
+    avatar,
+    email,
+    name,
+    gender,
+    password: hashedPassword,
+  });
+  await user.save();
+  return {
+    ...user._doc,
+    _id: user._id.toString(),
+  };
+};
 
 // Gets user statistics
 const getUserStats = async (context: any, req: Request) => {
@@ -58,9 +79,32 @@ const getUsers = async (context: any, req: Request) => {
 };
 
 // Deletes a single user
-const deleteUser = async ({ userId }: any, req: Request) => {};
+const deleteUser = async ({ userId }: any, req: Request) => {
+  const user = await User.findById(userId);
+  user.isDeleted = true;
+  await user.save();
+  return {
+    ...user,
+    _id: user._id.toString(),
+  };
+};
 
 // Updates a single user
-const updateUser = async ({ userId, userInput }: any, req: Request) => {};
+const updateUser = async (
+  { userId, user: { avatar, email, name, password, gender } }: any,
+  req: Request
+) => {
+  const user = await User.findById(userId);
+  user.avatar = avatar;
+  user.email = email;
+  user.name = name;
+  user.password = password;
+  user.gender = gender;
+  await user.save();
+  return {
+    ...user,
+    _id: user._id.toString(),
+  };
+};
 
-export { deleteUser, getUser, getUsers, getUserStats, updateUser };
+export { createUser, deleteUser, getUser, getUsers, getUserStats, updateUser };

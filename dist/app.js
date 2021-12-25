@@ -25,16 +25,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //Required libraries
 const express_1 = __importStar(require("express"));
 const cors_1 = __importDefault(require("cors"));
-const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const mongoose_1 = require("mongoose");
 const path_1 = require("path");
+const express_session_1 = __importDefault(require("express-session"));
 //Middlewares
-const authenticate_1 = __importDefault(require("./api/v1/middlewares/authenticate"));
-const graphql_1 = __importDefault(require("./api/v1/middlewares/graphql"));
-const use_1 = __importDefault(require("./api/v1/middlewares/use"));
-const error_handler_1 = __importDefault(require("./api/v1/middlewares/error-handler"));
+const middlewares_1 = require("./api/v1/middlewares");
 //Routes
-const auth_1 = __importDefault(require("./api/v1/routes/auth"));
+const routes_1 = require("./api/v1/routes");
 // import api from "./api/v1/routes/api";
 //Port config
 const PORT = process.env.PORT || 5000;
@@ -45,18 +42,29 @@ const app = (0, express_1.default)();
 //cors middleware config
 app.use((0, cors_1.default)({
     credentials: true,
-    origin: "http://localhost:8080",
+    origin: "http://localhost:3000",
 }));
+//Session
+const sess = {
+    resave: false,
+    saveUninitialized: true,
+    secret: process.env.SECRET || "thisissonotrecommended",
+    cookie: { secure: false, maxAge: 60000 },
+};
+if (app.get("env") === "production") {
+    app.set("trust proxy", 1); // trust first proxy
+    sess.cookie.secure = true; // serve secure cookies
+}
+app.use((0, express_session_1.default)(sess));
 //JSON,cookie,Form parsing and public path middlewares
-app.use((0, cookie_parser_1.default)(process.env.SECRET));
-app.use((0, express_1.static)((0, path_1.join)(__dirname, "public")));
+app.use("/public", (0, express_1.static)((0, path_1.join)(__dirname, "..", "public")));
 app.use((0, express_1.json)());
 app.use((0, express_1.urlencoded)({ extended: false }));
 //API routes
-app.use("/auth", auth_1.default);
-// app.use("/api", [authenticate, api]);
-app.use("/graphql", [(0, use_1.default)(authenticate_1.default), (0, use_1.default)(graphql_1.default)]);
-app.use(error_handler_1.default);
+app.use("/auth", routes_1.auth);
+app.use("/api", routes_1.api);
+app.use("/graphql", [(0, middlewares_1.use)(middlewares_1.graphql)]);
+app.use(middlewares_1.errorHandler);
 (0, mongoose_1.connect)(`mongodb://localhost:27017/${process.env.DB_NAME}`)
     .then(() => {
     app.listen(PORT, () => console.log(`Server app runnning on port: %d`, PORT));

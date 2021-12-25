@@ -33,6 +33,7 @@ import {
 } from "./orders";
 
 import {
+  createUser,
   deleteUser,
   getUser,
   getUsers,
@@ -76,6 +77,7 @@ export default {
   user: getUser,
   users: getUsers,
   userStats: getUserStats,
+  createUser,
   deleteUser,
   updateUser,
 };

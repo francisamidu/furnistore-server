@@ -2,16 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const ProductSchema = new mongoose_1.Schema({
-    color: {
-        type: String,
+    colors: {
+        type: Array,
         required: true,
     },
     description: {
         type: String,
         required: true,
     },
-    size: {
-        type: String,
+    sizes: {
+        type: Array,
         required: true,
     },
     price: {
@@ -19,13 +19,17 @@ const ProductSchema = new mongoose_1.Schema({
         required: true,
     },
     quantity: {
-        type: String,
+        type: Number,
         required: true,
     },
-    title: {
+    name: {
         type: String,
         required: true,
         unique: true,
+    },
+    image: {
+        type: String,
+        required: true,
     },
     categories: {
         type: Array,

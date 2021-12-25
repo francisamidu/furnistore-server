@@ -73,11 +73,33 @@ const getOrderStats = (context, req) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.getOrderStats = getOrderStats;
 // Creates a single order
-const createOrder = ({}, req) => __awaiter(void 0, void 0, void 0, function* () { });
+const createOrder = ({ userId, product, amount, address }, req) => __awaiter(void 0, void 0, void 0, function* () {
+    const newOrder = new Order_1.default({
+        amount,
+        address,
+        product,
+        userId,
+    });
+    yield newOrder.save();
+    return Object.assign(Object.assign({}, newOrder), { _id: newOrder._id.toString() });
+});
 exports.createOrder = createOrder;
 // Deletes a single order
-const deleteOrder = ({}, req) => __awaiter(void 0, void 0, void 0, function* () { });
+const deleteOrder = ({ orderId }, req) => __awaiter(void 0, void 0, void 0, function* () {
+    const order = yield Order_1.default.findById(orderId);
+    order.isDeleted = true;
+    yield order.save();
+    return Object.assign(Object.assign({}, order), { _id: order._id.toString() });
+});
 exports.deleteOrder = deleteOrder;
 // Updates a single order
-const updateOrder = ({}, req) => __awaiter(void 0, void 0, void 0, function* () { });
+const updateOrder = ({ orderId, orderInput: { userId, products, amount, address } }, req) => __awaiter(void 0, void 0, void 0, function* () {
+    const order = yield Order_1.default.findById(orderId);
+    order.userId = userId;
+    order.products = products;
+    order.amount = amount;
+    order.address = address;
+    yield order.save();
+    return Object.assign(Object.assign({}, order), { _id: order._id.toString() });
+});
 exports.updateOrder = updateOrder;

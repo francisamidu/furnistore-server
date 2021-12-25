@@ -13,9 +13,7 @@ const getProduct = async ({ productId }: any, req: Request) => {
 
 // Gets all products
 const getProducts = async (context: any, req: Request) => {
-  const result = await Product.find({ isDeleted: false }).populate(
-    "categories"
-  );
+  const result = await Product.find({ isDeleted: false });
   const products = result.map((product) => ({
     _id: product._id.toString(),
     ...product._doc,
@@ -25,7 +23,6 @@ const getProducts = async (context: any, req: Request) => {
 
 // Gets products by categories
 const getProductsByCategories = async (context: any, req: Request) => {
-  console.log(context);
   const result = await Product.find({
     isDeleted: false,
     categories: { $in: ["categories"] },
@@ -39,7 +36,6 @@ const getProductsByCategories = async (context: any, req: Request) => {
 
 // Gets new Products
 const getNewProducts = async (context: any, req: Request) => {
-  console.log(context);
   const result = await Product.find({
     isDeleted: false,
   })
@@ -52,6 +48,35 @@ const getNewProducts = async (context: any, req: Request) => {
   return products;
 };
 
+// Gets product statistics
+const getTrendingProductStats = async (context: any, req: Request) => {
+  const date = new Date();
+  const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
+  const result = await Product.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: lastYear,
+        },
+      },
+    },
+    {
+      $project: {
+        month: {
+          $month: "createdAt",
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$month",
+        total: {
+          sum: 1,
+        },
+      },
+    },
+  ]);
+};
 // Gets product statistics
 const getProductStats = async (context: any, req: Request) => {
   const date = new Date();
@@ -89,23 +114,34 @@ const getProductStats = async (context: any, req: Request) => {
 
 // Creates a single product
 const createProduct = async (
-  { color, description, image, price, quantity, size, name, categories }: any,
+  {
+    product: {
+      colors,
+      description,
+      image,
+      price,
+      quantity,
+      sizes,
+      name,
+      categories,
+    },
+  }: any,
   req: Request
 ) => {
   const newProduct = new Product({
     categories,
-    color,
+    colors,
     description,
     name,
     image,
     price,
     quantity,
-    size,
+    sizes,
   });
   await newProduct.save();
   return {
     _id: newProduct._id,
-    ...newProduct,
+    ...newProduct._doc,
   };
 };
 
@@ -114,11 +150,41 @@ const deleteProduct = async ({ productId }: any, req: Request) => {
   const product = await Product.findById(productId);
   product.isDeleted = true;
   const deletedProduct = await product.save();
-  return { product: deletedProduct._doc };
+  return { ...deletedProduct._doc };
 };
 
 // Updates a single product
-const updateProduct = async ({}: any, req: Request) => {};
+const updateProduct = async (
+  {
+    productId,
+    product: {
+      color,
+      description,
+      image,
+      price,
+      quantity,
+      size,
+      name,
+      categories,
+    },
+  }: any,
+  req: Request
+) => {
+  const product = await Product.findById(productId);
+  product.categories = categories;
+  product.color = color;
+  product.description = description;
+  product.name = name;
+  product.image = image;
+  product.price = price;
+  product.quantity = quantity;
+  product.size = size;
+  await product.save();
+  return {
+    ...product,
+    _id: product._id.toString(),
+  };
+};
 
 export {
   createProduct,

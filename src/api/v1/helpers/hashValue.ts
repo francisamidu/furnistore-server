@@ -1,8 +1,8 @@
 import { AES } from "crypto-js";
-export default async function (password: string) {
+export default async function (value: string) {
   try {
     const hashedValue = await AES.encrypt(
-      password,
+      value,
       process.env.SECRET || "thisisnotideal"
     ).toString();
     return hashedValue;

@@ -37,6 +37,7 @@ exports.default = {
     user: users_1.getUser,
     users: users_1.getUsers,
     userStats: users_1.getUserStats,
+    createUser: users_1.createUser,
     deleteUser: users_1.deleteUser,
     updateUser: users_1.updateUser,
 };

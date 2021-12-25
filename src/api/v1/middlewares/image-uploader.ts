@@ -1,5 +1,6 @@
 import multer from "multer";
 import { Request } from "express";
+import { extname } from "path";
 
 const storage = multer.diskStorage({
   destination: (
@@ -10,8 +11,8 @@ const storage = multer.diskStorage({
     return callback(null, "public");
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 25);
+    cb(null, `furnistore-${uniqueSuffix}-${extname(file.originalname)}`);
   },
 });
 

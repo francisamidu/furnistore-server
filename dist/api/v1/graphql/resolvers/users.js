@@ -12,8 +12,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.getUserStats = exports.getUsers = exports.getUser = exports.deleteUser = void 0;
+exports.updateUser = exports.getUserStats = exports.getUsers = exports.getUser = exports.deleteUser = exports.createUser = void 0;
 const User_1 = __importDefault(require("../../db/models/User"));
+const helpers_1 = require("../../helpers");
+//Creates an individual user
+const createUser = ({ user: { avatar, email, name, password, gender } }, req) => __awaiter(void 0, void 0, void 0, function* () {
+    const hashedPassword = yield (0, helpers_1.hashValue)(password);
+    const user = new User_1.default({
+        avatar,
+        email,
+        name,
+        gender,
+        password: hashedPassword,
+    });
+    yield user.save();
+    return Object.assign(Object.assign({}, user._doc), { _id: user._id.toString() });
+});
+exports.createUser = createUser;
 // Gets user statistics
 const getUserStats = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
     const date = new Date();
@@ -60,8 +75,22 @@ const getUsers = (context, req) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.getUsers = getUsers;
 // Deletes a single user
-const deleteUser = ({ userId }, req) => __awaiter(void 0, void 0, void 0, function* () { });
+const deleteUser = ({ userId }, req) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findById(userId);
+    user.isDeleted = true;
+    yield user.save();
+    return Object.assign(Object.assign({}, user), { _id: user._id.toString() });
+});
 exports.deleteUser = deleteUser;
 // Updates a single user
-const updateUser = ({ userId, userInput }, req) => __awaiter(void 0, void 0, void 0, function* () { });
+const updateUser = ({ userId, user: { avatar, email, name, password, gender } }, req) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findById(userId);
+    user.avatar = avatar;
+    user.email = email;
+    user.name = name;
+    user.password = password;
+    user.gender = gender;
+    yield user.save();
+    return Object.assign(Object.assign({}, user), { _id: user._id.toString() });
+});
 exports.updateUser = updateUser;

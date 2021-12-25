@@ -17,6 +17,6 @@ router.use("/logout", use(logoutController));
 router.use("/signup", use(registrationController));
 router.use("/send-otp", use(sendOTPController));
 router.use("/reset-password", use(resetPasswordController));
-router.user("/validate-otp", use(validateOTPController));
+router.use("/validate-otp", use(validateOTPController));
 
 export default router;

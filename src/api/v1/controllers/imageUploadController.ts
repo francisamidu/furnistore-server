@@ -5,7 +5,7 @@ import { imageUploadService } from "../services/index";
 import { imageUploader, validateImage } from "../middlewares";
 
 const router = express.Router();
-router.post(
+router.put(
   "/",
   [imageUploader.single("image"), validateImage],
   imageUploadService

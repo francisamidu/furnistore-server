@@ -10,13 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
-//Database models
 const models_1 = require("../db/models");
-//Auth Utilities
-const helpers_1 = require("../helpers");
-//New user account registration
-const registrationService = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
+//Validates OTP for password reset verification
+const validateOTPService = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { otp } = req.body;
     //Validate credentials and send back response message
     const validationResults = (0, express_validator_1.validationResult)(req);
     if (validationResults.length) {
@@ -27,30 +24,14 @@ const registrationService = (req, res) => __awaiter(void 0, void 0, void 0, func
         return res.status(401).json(errors);
     }
     //Query the database for user and send back response message
-    const user = yield models_1.User.findOne({ email });
-    if (user) {
-        return res
-            .status(400)
-            .json({ message: "User already exists", success: false });
+    const savedOTP = yield models_1.OTP.findOne({ token: otp });
+    if (!savedOTP) {
+        return res.status(404).json({ message: "OTP is invalid", success: false });
     }
-    //has user password
-    const hashedPassword = yield (0, helpers_1.hashValue)(password);
-    //create User and save to the database
-    const newUser = new models_1.User({
-        email,
-        password: hashedPassword,
-    });
-    yield newUser.save();
-    const verificationToken = new models_1.OTP({
-        token: (0, helpers_1.generateOTP)(),
-    });
-    yield verificationToken.save();
-    return res.status(201).json({
-        success: true,
-        user: {
-            email: newUser._doc.email,
-            createdAt: newUser._doc.created_at,
-        },
-    });
+    //Delete otp after validation
+    yield models_1.OTP.findOneAndDelete({ token: otp });
+    return res
+        .status(200)
+        .json({ message: "OTP has been validated", sucess: true });
 });
-exports.default = registrationService;
+exports.default = validateOTPService;

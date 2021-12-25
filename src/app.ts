@@ -9,7 +9,7 @@ import session from "express-session";
 import { authenticate, graphql, errorHandler, use } from "./api/v1/middlewares";
 
 //Routes
-import auth from "./api/v1/routes/auth";
+import { auth, api } from "./api/v1/routes";
 // import api from "./api/v1/routes/api";
 
 //Port config
@@ -25,7 +25,7 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:8080",
+    origin: "http://localhost:3000",
   })
 );
 
@@ -45,14 +45,15 @@ if (app.get("env") === "production") {
 app.use(session(sess));
 
 //JSON,cookie,Form parsing and public path middlewares
-app.use(expressStatic(join(__dirname, "public")));
+
+app.use("/public", expressStatic(join(__dirname, "..", "public")));
 app.use(json());
 app.use(urlencoded({ extended: false }));
 
 //API routes
 app.use("/auth", auth);
-// app.use("/api", [authenticate, api]);
-app.use("/graphql", [use(authenticate), use(graphql)]);
+app.use("/api", api);
+app.use("/graphql", [use(graphql)]);
 
 app.use(errorHandler);
 

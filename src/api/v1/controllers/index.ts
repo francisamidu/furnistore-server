@@ -1,3 +1,4 @@
+import imageUploadController from "../controllers/imageUploadController";
 import loginController from "../controllers/loginController";
 import logoutController from "../controllers/logoutController";
 import registrationController from "../controllers/registrationController";
@@ -6,6 +7,7 @@ import sendOTPController from "../controllers/sendOTPController";
 import validateOTPController from "../controllers/validateOTPController";
 
 export {
+  imageUploadController,
   loginController,
   logoutController,
   registrationController,

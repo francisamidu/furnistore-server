@@ -22,14 +22,13 @@ const getProduct = ({ productId }, req) => __awaiter(void 0, void 0, void 0, fun
 exports.getProduct = getProduct;
 // Gets all products
 const getProducts = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Product_1.default.find({ isDeleted: false }).populate("categories");
+    const result = yield Product_1.default.find({ isDeleted: false });
     const products = result.map((product) => (Object.assign({ _id: product._id.toString() }, product._doc)));
     return products;
 });
 exports.getProducts = getProducts;
 // Gets products by categories
 const getProductsByCategories = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(context);
     const result = yield Product_1.default.find({
         isDeleted: false,
         categories: { $in: ["categories"] },
@@ -40,7 +39,6 @@ const getProductsByCategories = (context, req) => __awaiter(void 0, void 0, void
 exports.getProductsByCategories = getProductsByCategories;
 // Gets new Products
 const getNewProducts = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(context);
     const result = yield Product_1.default.find({
         isDeleted: false,
     })
@@ -50,6 +48,35 @@ const getNewProducts = (context, req) => __awaiter(void 0, void 0, void 0, funct
     return products;
 });
 exports.getNewProducts = getNewProducts;
+// Gets product statistics
+const getTrendingProductStats = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
+    const date = new Date();
+    const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
+    const result = yield Product_1.default.aggregate([
+        {
+            $match: {
+                createdAt: {
+                    $gte: lastYear,
+                },
+            },
+        },
+        {
+            $project: {
+                month: {
+                    $month: "createdAt",
+                },
+            },
+        },
+        {
+            $group: {
+                _id: "$month",
+                total: {
+                    sum: 1,
+                },
+            },
+        },
+    ]);
+});
 // Gets product statistics
 const getProductStats = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
     const date = new Date();
@@ -83,18 +110,19 @@ const getProductStats = (context, req) => __awaiter(void 0, void 0, void 0, func
 });
 exports.getProductStats = getProductStats;
 // Creates a single product
-const createProduct = ({ color, description, image, price, quantity, size, title }, req) => __awaiter(void 0, void 0, void 0, function* () {
+const createProduct = ({ product: { colors, description, image, price, quantity, sizes, name, categories, }, }, req) => __awaiter(void 0, void 0, void 0, function* () {
     const newProduct = new Product_1.default({
-        color,
+        categories,
+        colors,
         description,
+        name,
         image,
         price,
         quantity,
-        size,
-        title,
+        sizes,
     });
     yield newProduct.save();
-    return Object.assign({ _id: newProduct._id }, newProduct);
+    return Object.assign({ _id: newProduct._id }, newProduct._doc);
 });
 exports.createProduct = createProduct;
 // Deletes a single product
@@ -102,9 +130,21 @@ const deleteProduct = ({ productId }, req) => __awaiter(void 0, void 0, void 0, 
     const product = yield Product_1.default.findById(productId);
     product.isDeleted = true;
     const deletedProduct = yield product.save();
-    return { product: deletedProduct._doc };
+    return Object.assign({}, deletedProduct._doc);
 });
 exports.deleteProduct = deleteProduct;
 // Updates a single product
-const updateProduct = ({}, req) => __awaiter(void 0, void 0, void 0, function* () { });
+const updateProduct = ({ productId, product: { color, description, image, price, quantity, size, name, categories, }, }, req) => __awaiter(void 0, void 0, void 0, function* () {
+    const product = yield Product_1.default.findById(productId);
+    product.categories = categories;
+    product.color = color;
+    product.description = description;
+    product.name = name;
+    product.image = image;
+    product.price = price;
+    product.quantity = quantity;
+    product.size = size;
+    yield product.save();
+    return Object.assign(Object.assign({}, product), { _id: product._id.toString() });
+});
 exports.updateProduct = updateProduct;

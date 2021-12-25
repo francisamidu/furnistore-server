@@ -1,16 +1,16 @@
 import { model, Schema, Types } from "mongoose";
 
 const ProductSchema = new Schema({
-  color: {
-    type: String,
+  colors: {
+    type: Array,
     required: true,
   },
   description: {
     type: String,
     required: true,
   },
-  size: {
-    type: String,
+  sizes: {
+    type: Array,
     required: true,
   },
   price: {
@@ -18,13 +18,17 @@ const ProductSchema = new Schema({
     required: true,
   },
   quantity: {
-    type: String,
+    type: Number,
     required: true,
   },
   name: {
     type: String,
     required: true,
     unique: true,
+  },
+  image: {
+    type: String,
+    required: true,
   },
   categories: {
     type: Array,

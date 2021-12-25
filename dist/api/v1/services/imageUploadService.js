@@ -9,16 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const crypto_js_1 = require("crypto-js");
-function default_1(value) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const hashedValue = yield crypto_js_1.AES.encrypt(value, process.env.SECRET || "thisisnotideal").toString();
-            return hashedValue;
-        }
-        catch (error) {
-            throw error;
-        }
+const imageUploadService = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { destination, filename } = req.file;
+    console.log(process.env);
+    return res.status(200).json({
+        message: "Image uploaded",
+        imageUrl: `http://localhost:5000\/${destination}\/${filename}`,
     });
-}
-exports.default = default_1;
+});
+exports.default = imageUploadService;

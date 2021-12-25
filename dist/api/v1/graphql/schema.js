@@ -18,23 +18,24 @@ exports.default = (0, graphql_1.buildSchema)(`
 
     type Product{
         _id: ID!
-        color: String
+        colors: [String]
         categories: [String]
         description: String
         image: String
-        price: String
+        price: Int
         quantity: Int
-        size: String
-        title: String
+        sizes: [String]
+        name: String
     }
     input ProductInput{
-        color: String!
+        categories: [String]
+        colors: [String!]
         description: String!
         image: String!
-        price: String!
+        price: Int!
         quantity: Int!
-        size: String!
-        title: String!
+        sizes: [String!]
+        name: String!
     }
 
     type Cart{
@@ -72,6 +73,10 @@ exports.default = (0, graphql_1.buildSchema)(`
         city: String!
         address: String!
     }
+    type Stat{
+        _id: ID
+        total: Int
+    }    
 
     type User{
         _id: ID!
@@ -79,17 +84,23 @@ exports.default = (0, graphql_1.buildSchema)(`
         isVerified: Boolean
         isAdmin: Boolean
         avatar: String
+        name: String
+        gender: String
     }
     input UserInput{    
         avatar: String
         email: String
+        name: String
+        password: String
+        gender: String
     }
 
-    type Mutation{
-        createCategory: Category!
-        createCart: Cart!
-        createOrder: Order!
-        createProduct: Product!        
+    type Mutation{        
+        createCart(cart:CartInput): Cart!
+        createOrder(order:OrderInput): Order!
+        cancelOrder(orderId:ID!): Order!
+        createProduct(product:ProductInput): Product!        
+        createUser(user:UserInput): User!        
 
         deleteCategory(categoryId: ID!): Category!
         deleteCart(cartId: ID!): Cart!
@@ -98,8 +109,8 @@ exports.default = (0, graphql_1.buildSchema)(`
         deleteUser(userId: ID!): User!
 
         updateCategory(categoryId: ID!,title: String!): Category!
-        updateCart(cartId: ID!): Cart!
-        updateOrder(orderId: ID!): Order!
+        updateCart(cartId: ID!, cart:CartInput): Cart!
+        updateOrder(orderId: ID!, order:OrderInput): Order!
         updateProduct(productId: ID!,product: ProductInput): Product!
         updateUser(userId: ID!,user: UserInput): User!
     }
@@ -116,12 +127,17 @@ exports.default = (0, graphql_1.buildSchema)(`
         productsByCategories(categories: [String]): [Product]
         newProducts: [Product]
         
-        carts: [Cart]
-        categories: [Category]
+        carts: [Cart]        
         products: [Product]
         orders: [Order]
-        sales: [Object]
+        ordersCancelled: [Order]
+        ordersPending: [Order]
         users: [User]
+
+        orderStats: [Stat]
+        productStats: [Stat]
+        sales: [Stat]
+        userStats: [Stat]
     }    
 
     schema {
