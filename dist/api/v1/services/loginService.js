@@ -62,11 +62,6 @@ const loginService = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         refreshToken,
     });
     yield savedToken.save();
-    //Set Token headers
-    res.set("Access-Control-Expose-Headers", "x-auth-token");
-    res.set("Access-Control-Expose-Headers", "x-refresh-token");
-    res.set("x-auth-token", accessToken);
-    res.set("x-refresh-token", refreshToken);
     return res.json({
         message: "Login successful",
         success: true,
@@ -74,6 +69,8 @@ const loginService = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             _id: user._id,
             isAdmin,
             isVerified,
+            accessToken,
+            refreshToken,
         },
     });
 });

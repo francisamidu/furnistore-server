@@ -10,9 +10,9 @@ const storage = multer.diskStorage({
   ) => {
     return callback(null, "public");
   },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 25);
-    cb(null, `furnistore-${uniqueSuffix}-${extname(file.originalname)}`);
+  filename: (req, file: Express.Multer.File & { mimetype: string }, cb) => {
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 25)}`;
+    cb(null, `furnistore-${uniqueSuffix}.${file.mimetype.split("/")[1]}`);
   },
 });
 

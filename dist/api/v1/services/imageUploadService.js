@@ -11,10 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const imageUploadService = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { destination, filename } = req.file;
-    console.log(process.env);
     return res.status(200).json({
-        message: "Image uploaded",
         imageUrl: `http://localhost:5000\/${destination}\/${filename}`,
+        message: "Image uploaded",
+        success: true,
     });
 });
 exports.default = imageUploadService;
