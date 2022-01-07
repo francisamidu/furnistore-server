@@ -51,7 +51,9 @@
     "typescript": "^4.5.2"
   },
   "scripts": {
-    "start": "concurrently --kill-others \"tsc -w\" \"nodemon dist/app.js\"",
-    "build": "tsc"
+    "start": "./node_modules/.bin/tsc-watch --onSuccess \"nodemon dist/app.js\"",
+    "build": "tsc",
+    "seed:roles": "./dist/api/v1/db/seed-roles.js",
+    "seed:users": "./dist/api/v1/db/seed-users.js"
   }
 }

@@ -4,13 +4,13 @@ import cors from "cors";
 import { connect } from "mongoose";
 import { join } from "path";
 import session from "express-session";
+import runSeed from "./api/v1/db/seed-roles";
 
 //Middlewares
 import { authenticate, graphql, errorHandler, use } from "./api/v1/middlewares";
 
 //Routes
 import { auth, api } from "./api/v1/routes";
-// import api from "./api/v1/routes/api";
 
 //Port config
 const PORT = process.env.PORT || 5000;
@@ -53,12 +53,13 @@ app.use(urlencoded({ extended: false }));
 //API routes
 app.use("/auth", auth);
 app.use("/api", api);
-app.use("/graphql", [use(graphql)]);
+app.use("/graphql", use(graphql));
 
 app.use(errorHandler);
 
 connect(`mongodb://localhost:27017/${process.env.DB_NAME}`)
   .then(() => {
+    runSeed();
     app.listen(PORT, () =>
       console.log(`Server app runnning on port: %d`, PORT)
     );

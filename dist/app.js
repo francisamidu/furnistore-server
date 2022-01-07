@@ -63,7 +63,7 @@ app.use((0, express_1.urlencoded)({ extended: false }));
 //API routes
 app.use("/auth", routes_1.auth);
 app.use("/api", routes_1.api);
-app.use("/graphql", [(0, middlewares_1.use)(middlewares_1.graphql)]);
+app.use("/graphql", (0, middlewares_1.use)(middlewares_1.graphql));
 app.use(middlewares_1.errorHandler);
 (0, mongoose_1.connect)(`mongodb://localhost:27017/${process.env.DB_NAME}`)
     .then(() => {
