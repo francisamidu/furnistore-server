@@ -1,9 +1,9 @@
 import { Request } from "express";
 
-import Order from "../../db/models/Order";
+import { Address, Order, User } from "../../db/models";
 
 // Gets single order
-const getOrder = async ({ orderId }: any, req: Request) => {
+const getOrder = async ({ orderId }: any, _: Request) => {
   const result = await Order.findById(orderId);
   return {
     _id: result._id,
@@ -12,7 +12,7 @@ const getOrder = async ({ orderId }: any, req: Request) => {
 };
 
 // Gets all orders
-const getOrders = async (context: any, req: Request) => {
+const getOrders = async (context: any, _: Request) => {
   const result = await Order.find({});
   const orders = result.map((order: any) => ({
     _id: order._id.toString(),
@@ -22,7 +22,7 @@ const getOrders = async (context: any, req: Request) => {
 };
 
 // Gets single order by user
-const getOrderByUser = async ({ userId }: any, req: Request) => {
+const getOrderByUser = async ({ userId }: any, _: Request) => {
   const result = await Order.findOne({ userId });
   return {
     _id: result._id,
@@ -30,7 +30,7 @@ const getOrderByUser = async ({ userId }: any, req: Request) => {
   };
 };
 // Gets order by user
-const getOrdersByUser = async ({ userId }: any, req: Request) => {
+const getOrdersByUser = async ({ userId }: any, _: Request) => {
   const result = await Order.find({ userId });
   const orders = result.map((order: any) => ({
     _id: order._id.toString(),
@@ -40,7 +40,7 @@ const getOrdersByUser = async ({ userId }: any, req: Request) => {
 };
 
 // Gets order statistics
-const getOrderStats = async (context: any, req: Request) => {
+const getOrderStats = async (context: any, _: Request) => {
   const date = new Date();
   const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
 
@@ -78,28 +78,36 @@ const getOrderStats = async (context: any, req: Request) => {
 // Creates a single order
 const createOrder = async (
   { userId, product, amount, address }: any,
-  req: Request
+  _: Request
 ) => {
+  const user = await User.findById(userId);
+  const storedAddress = await Address.findById(address);
+  if (!storedAddress) {
+    throw new Error("Address doesnt exist");
+  }
+  if (!user) {
+    throw new Error("User doesnt exist");
+  }
   const newOrder = new Order({
     amount,
-    address,
+    address: storedAddress,
     product,
-    userId,
+    userId: user,
   });
   await newOrder.save();
   return {
-    ...newOrder,
+    ...newOrder._doc,
     _id: newOrder._id.toString(),
   };
 };
 
 // Deletes a single order
-const deleteOrder = async ({ orderId }: any, req: Request) => {
+const deleteOrder = async ({ orderId }: any, _: Request) => {
   const order = await Order.findById(orderId);
   order.isDeleted = true;
   await order.save();
   return {
-    ...order,
+    ...order._doc,
     _id: order._id.toString(),
   };
 };
@@ -107,7 +115,7 @@ const deleteOrder = async ({ orderId }: any, req: Request) => {
 // Updates a single order
 const updateOrder = async (
   { orderId, orderInput: { userId, products, amount, address } }: any,
-  req: Request
+  _: Request
 ) => {
   const order = await Order.findById(orderId);
   order.userId = userId;
@@ -116,7 +124,7 @@ const updateOrder = async (
   order.address = address;
   await order.save();
   return {
-    ...order,
+    ...order._doc,
     _id: order._id.toString(),
   };
 };

@@ -8,17 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSales = void 0;
-const Order_1 = __importDefault(require("../../db/models/Order"));
+const models_1 = require("../../db/models");
 const getSales = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
     const date = new Date();
     const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
     const previousMonth = new Date(date.setMonth(lastMonth.getMonth() - 1));
-    const result = yield Order_1.default.aggregate([
+    const result = yield models_1.Order.aggregate([
         {
             $match: {
                 createdAt: {

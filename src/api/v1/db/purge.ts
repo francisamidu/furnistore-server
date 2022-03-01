@@ -1,7 +1,9 @@
 import { connect } from "mongoose";
+import { config } from "dotenv";
+config();
 
 //Database connection
-connect(`mongodb://localhost:27017/${process.env.DB_NAME}`)
+connect(`mongodb://localhost:27017/${process.env.DB_NAME || "furnistore"}`)
   .then(async (res) => {
     try {
       await res.connections[0].dropDatabase();

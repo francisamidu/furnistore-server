@@ -19,5 +19,10 @@ const AddressSchema = new mongoose_1.Schema({
         required: false,
         default: false,
     },
+    userId: {
+        type: mongoose_1.Types.ObjectId,
+        required: true,
+        ref: "user",
+    },
 });
 exports.default = (0, mongoose_1.model)("addresse", AddressSchema);

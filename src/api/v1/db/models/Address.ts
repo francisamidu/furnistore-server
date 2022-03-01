@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 const AddressSchema = new Schema({
   phone: {
@@ -17,6 +17,11 @@ const AddressSchema = new Schema({
     type: Boolean,
     required: false,
     default: false,
+  },
+  userId: {
+    type: Types.ObjectId,
+    required: true,
+    ref: "user",
   },
 });
 

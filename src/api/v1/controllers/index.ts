@@ -1,3 +1,4 @@
+import generateNewTokenController from "../controllers/generateNewTokenController";
 import imageUploadController from "../controllers/imageUploadController";
 import loginController from "../controllers/loginController";
 import logoutController from "../controllers/logoutController";
@@ -7,6 +8,7 @@ import sendOTPController from "../controllers/sendOTPController";
 import validateOTPController from "../controllers/validateOTPController";
 
 export {
+  generateNewTokenController,
   imageUploadController,
   loginController,
   logoutController,

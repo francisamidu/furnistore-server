@@ -18,24 +18,26 @@ const helpers_1 = require("../helpers");
 const loginService = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     //Check for empty credentials and send back response message
-    const validationResults = (0, express_validator_1.validationResult)(req);
-    if (validationResults.length) {
-        return res.status(403).json({
-            message: "Please provide valid login credentials",
-            success: false,
-        });
+    const validationResults = (0, express_validator_1.validationResult)(req).formatWith(helpers_1.serializeValidationResults);
+    const results = validationResults.array();
+    if (results.length) {
+        return res.status(406).json(results);
     }
     //Query the database for user and send back response message
-    const user = yield models_1.User.findOne({ email });
+    const user = yield models_1.User.findOne({ email }).populate({
+        select: ["code", "roles"],
+        model: "role",
+        path: "roles",
+    });
     if (!user) {
         return res.status(404).json({ message: "No user found", success: false });
     }
-    const { isAdmin, isVerified } = user;
-    if (!isVerified) {
-        return res
-            .status(401)
-            .json({ message: "Account verification required", success: false });
-    }
+    const { roles } = user;
+    // if (!isVerified) {
+    //   return res
+    //     .status(401)
+    //     .json({ message: "Account verification required", success: false });
+    // }
     //Compare password and send back response message
     const decryptedPassword = (0, helpers_1.decryptPassword)(user.password);
     const isPasswordMatching = (0, helpers_1.comparePassword)(password, decryptedPassword);
@@ -47,12 +49,9 @@ const loginService = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     //Sign JWT
     req.session.user = {
         _id: user._id,
-        isAdmin,
+        roles,
     };
-    const accessToken = yield (0, helpers_1.signJwt)({
-        _id: user._id,
-        isAdmin,
-    });
+    const accessToken = yield (0, helpers_1.signJwt)(req.session.user);
     const refreshToken = yield (0, helpers_1.signJwt)({
         id: Date.now(),
     }, 3.154e10);
@@ -67,10 +66,9 @@ const loginService = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         success: true,
         user: {
             _id: user._id,
-            isAdmin,
-            isVerified,
             accessToken,
             refreshToken,
+            roles,
         },
     });
 });

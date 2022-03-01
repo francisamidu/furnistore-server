@@ -7,32 +7,41 @@ import { validationResult } from "express-validator";
 import { Token, User } from "../db/models";
 
 //Auth Utilities
-import { comparePassword, decryptPassword, signJwt } from "../helpers";
+import {
+  comparePassword,
+  decryptPassword,
+  signJwt,
+  serializeValidationResults,
+} from "../helpers";
 
 //Logs in user and creates a new session
 const loginService = async (req: SessionRequest, res: Response) => {
   const { email, password } = req.body;
 
   //Check for empty credentials and send back response message
-  const validationResults: any = validationResult(req);
-  if (validationResults.length) {
-    return res.status(403).json({
-      message: "Please provide valid login credentials",
-      success: false,
-    });
+  const validationResults = validationResult(req).formatWith(
+    serializeValidationResults
+  );
+  const results = validationResults.array();
+  if (results.length) {
+    return res.status(406).json(results);
   }
 
   //Query the database for user and send back response message
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate({
+    select: ["code", "roles"],
+    model: "role",
+    path: "roles",
+  });
   if (!user) {
     return res.status(404).json({ message: "No user found", success: false });
   }
-  const { isAdmin, isVerified } = user;
-  if (!isVerified) {
-    return res
-      .status(401)
-      .json({ message: "Account verification required", success: false });
-  }
+  const { roles } = user;
+  // if (!isVerified) {
+  //   return res
+  //     .status(401)
+  //     .json({ message: "Account verification required", success: false });
+  // }
   //Compare password and send back response message
   const decryptedPassword = decryptPassword(user.password);
   const isPasswordMatching = comparePassword(password, decryptedPassword);
@@ -45,12 +54,10 @@ const loginService = async (req: SessionRequest, res: Response) => {
   //Sign JWT
   req.session.user = {
     _id: user._id,
-    isAdmin,
+    roles,
   };
-  const accessToken = await signJwt({
-    _id: user._id,
-    isAdmin,
-  });
+
+  const accessToken = await signJwt(req.session.user);
   const refreshToken = await signJwt(
     {
       id: Date.now(),
@@ -70,10 +77,9 @@ const loginService = async (req: SessionRequest, res: Response) => {
     success: true,
     user: {
       _id: user._id,
-      isAdmin,
-      isVerified,
       accessToken,
       refreshToken,
+      roles,
     },
   });
 };

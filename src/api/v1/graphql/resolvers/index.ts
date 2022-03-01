@@ -1,3 +1,5 @@
+import verifyRoles from "../../middlewares/verify-roles";
+
 import {
   createCategory,
   deleteCategory,
@@ -10,7 +12,13 @@ import {
 import { createCart, deleteCart, getCart, getCarts, updateCart } from "./cart";
 
 import { getSales } from "./sales";
-
+import {
+  createAddress,
+  deleteAddress,
+  getAddress,
+  getAddresses,
+  updateAddress,
+} from "./address";
 import {
   createProduct,
   deleteProduct,
@@ -32,6 +40,8 @@ import {
   updateOrder,
 } from "./orders";
 
+import { assignPermissionToUserRole, getRole, getRoles } from "./role";
+
 import {
   createUser,
   deleteUser,
@@ -42,6 +52,12 @@ import {
 } from "./users";
 
 export default {
+  address: getAddress,
+  addresses: getAddresses,
+  createAddress,
+  deleteAddress,
+  updateAddress,
+
   category: getCategory,
   categories: getCategories,
   categoryStats: getCategoryStats,
@@ -67,12 +83,16 @@ export default {
   updateOrder,
 
   product: getProduct,
-  products: getProducts,
+  products: verifyRoles(getProducts),
   productStats: getProductStats,
   productByCategories: getProductsByCategories,
   createProduct,
   deleteProduct,
   updateProduct,
+
+  assignPermission: assignPermissionToUserRole,
+  role: getRole,
+  roles: getRoles,
 
   user: getUser,
   users: getUsers,

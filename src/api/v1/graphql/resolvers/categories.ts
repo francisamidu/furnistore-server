@@ -1,4 +1,4 @@
-import Category from "../../db/models/Category";
+import { Category } from "../../db/models";
 import { Request } from "express";
 
 // Gets a single Category

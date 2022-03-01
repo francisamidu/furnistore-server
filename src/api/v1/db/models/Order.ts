@@ -6,11 +6,25 @@ const OrderSchema = new Schema(
       type: Types.ObjectId,
       required: true,
     },
+    orderId: {
+      type: Number,
+      required: true,
+    },
     products: [
       {
+        name: {
+          type: String,
+          required: true,
+          unique: true,
+        },
+        image: {
+          type: String,
+          required: true,
+        },
         productId: {
           type: Types.ObjectId,
           required: true,
+          ref: "product",
         },
         quantity: {
           type: Number,

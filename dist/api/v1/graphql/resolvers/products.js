@@ -8,28 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateProduct = exports.getProductsByCategories = exports.getProductStats = exports.getProducts = exports.getNewProducts = exports.getProduct = exports.deleteProduct = exports.createProduct = void 0;
-const Product_1 = __importDefault(require("../../db/models/Product"));
+exports.updateProduct = exports.getTrendingProductStats = exports.getProductsByCategories = exports.getProductStats = exports.getProducts = exports.getNewProducts = exports.getProduct = exports.deleteProduct = exports.createProduct = void 0;
+const models_1 = require("../../db/models");
 // Gets a single product
-const getProduct = ({ productId }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Product_1.default.findById(productId);
+const getProduct = ({ productId }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield models_1.Product.findById(productId);
     return Object.assign({ _id: result._id }, result._doc);
 });
 exports.getProduct = getProduct;
 // Gets all products
-const getProducts = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Product_1.default.find({ isDeleted: false });
+const getProducts = (context, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield models_1.Product.find({ isDeleted: false });
     const products = result.map((product) => (Object.assign({ _id: product._id.toString() }, product._doc)));
     return products;
 });
 exports.getProducts = getProducts;
 // Gets products by categories
-const getProductsByCategories = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Product_1.default.find({
+const getProductsByCategories = (context, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield models_1.Product.find({
         isDeleted: false,
         categories: { $in: ["categories"] },
     });
@@ -38,8 +35,8 @@ const getProductsByCategories = (context, req) => __awaiter(void 0, void 0, void
 });
 exports.getProductsByCategories = getProductsByCategories;
 // Gets new Products
-const getNewProducts = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Product_1.default.find({
+const getNewProducts = (context, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield models_1.Product.find({
         isDeleted: false,
     })
         .sort({ createdAt: -1 })
@@ -49,10 +46,10 @@ const getNewProducts = (context, req) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getNewProducts = getNewProducts;
 // Gets product statistics
-const getTrendingProductStats = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
+const getTrendingProductStats = (context, _) => __awaiter(void 0, void 0, void 0, function* () {
     const date = new Date();
     const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
-    const result = yield Product_1.default.aggregate([
+    const result = yield models_1.Product.aggregate([
         {
             $match: {
                 createdAt: {
@@ -76,12 +73,14 @@ const getTrendingProductStats = (context, req) => __awaiter(void 0, void 0, void
             },
         },
     ]);
+    return result.map((r) => (Object.assign(Object.assign({}, r._doc), { _id: r._id })));
 });
+exports.getTrendingProductStats = getTrendingProductStats;
 // Gets product statistics
-const getProductStats = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
+const getProductStats = (context, _) => __awaiter(void 0, void 0, void 0, function* () {
     const date = new Date();
     const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
-    const result = yield Product_1.default.aggregate([
+    const result = yield models_1.Product.aggregate([
         {
             $match: {
                 createdAt: {
@@ -110,8 +109,8 @@ const getProductStats = (context, req) => __awaiter(void 0, void 0, void 0, func
 });
 exports.getProductStats = getProductStats;
 // Creates a single product
-const createProduct = ({ product: { colors, description, image, price, quantity, sizes, name, categories, }, }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const newProduct = new Product_1.default({
+const createProduct = ({ product: { colors, description, image, price, quantity, sizes, name, categories, }, }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const newProduct = new models_1.Product({
         categories,
         colors,
         description,
@@ -126,16 +125,16 @@ const createProduct = ({ product: { colors, description, image, price, quantity,
 });
 exports.createProduct = createProduct;
 // Deletes a single product
-const deleteProduct = ({ productId }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const product = yield Product_1.default.findById(productId);
+const deleteProduct = ({ productId }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const product = yield models_1.Product.findById(productId);
     product.isDeleted = true;
     const deletedProduct = yield product.save();
-    return Object.assign({}, deletedProduct._doc);
+    return Object.assign(Object.assign({}, deletedProduct._doc), { _id: deletedProduct._id });
 });
 exports.deleteProduct = deleteProduct;
 // Updates a single product
-const updateProduct = ({ productId, product: { color, description, image, price, quantity, size, name, categories, }, }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const product = yield Product_1.default.findById(productId);
+const updateProduct = ({ productId, product: { color, description, image, price, quantity, size, name, categories, }, }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const product = yield models_1.Product.findById(productId);
     product.categories = categories;
     product.color = color;
     product.description = description;

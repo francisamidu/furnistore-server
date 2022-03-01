@@ -1,6 +1,6 @@
 import { Request } from "express";
 
-import Order from "../../db/models/Order";
+import { Order } from "../../db/models";
 
 const getSales = async (context: any, req: Request) => {
   const date = new Date();

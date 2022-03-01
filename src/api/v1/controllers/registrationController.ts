@@ -7,8 +7,10 @@ const router = express.Router();
 router.post(
   "/",
   [
-    check("email").isEmpty(),
     check("email").isEmail(),
+    check("fullName").isLength({ min: 3 }),
+    check("username").isLength({ min: 3 }),
+    check("page").isLength({ min: 3 }),
     check("password").isStrongPassword({
       minLength: 8,
       minLowercase: 1,

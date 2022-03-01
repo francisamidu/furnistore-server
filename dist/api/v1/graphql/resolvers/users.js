@@ -8,17 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateUser = exports.getUserStats = exports.getUsers = exports.getUser = exports.deleteUser = exports.createUser = void 0;
-const User_1 = __importDefault(require("../../db/models/User"));
+const models_1 = require("../../db/models");
 const helpers_1 = require("../../helpers");
 //Creates an individual user
-const createUser = ({ user: { avatar, email, name, password, gender } }, req) => __awaiter(void 0, void 0, void 0, function* () {
+const createUser = ({ user: { avatar, email, name, password, gender } }, _) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield (0, helpers_1.hashValue)(password);
-    const user = new User_1.default({
+    const user = new models_1.User({
         avatar,
         email,
         name,
@@ -30,10 +27,10 @@ const createUser = ({ user: { avatar, email, name, password, gender } }, req) =>
 });
 exports.createUser = createUser;
 // Gets user statistics
-const getUserStats = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
+const getUserStats = (context, _) => __awaiter(void 0, void 0, void 0, function* () {
     const date = new Date();
     const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
-    const result = yield User_1.default.aggregate([
+    const result = yield models_1.User.aggregate([
         {
             $match: {
                 createdAt: {
@@ -62,35 +59,35 @@ const getUserStats = (context, req) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.getUserStats = getUserStats;
 // Gets a single User
-const getUser = ({ userId }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield User_1.default.findById(userId);
+const getUser = ({ userId }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield models_1.User.findById(userId);
     return Object.assign({ _id: result._id }, result._doc);
 });
 exports.getUser = getUser;
 // Gets all users
-const getUsers = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield User_1.default.find({ isDeleted: false });
+const getUsers = (context, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield models_1.User.find({ isDeleted: false });
     const users = result.map((user) => (Object.assign({ _id: user._id.toString() }, user._doc)));
     return users;
 });
 exports.getUsers = getUsers;
 // Deletes a single user
-const deleteUser = ({ userId }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.default.findById(userId);
+const deleteUser = ({ userId }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield models_1.User.findById(userId);
     user.isDeleted = true;
     yield user.save();
-    return Object.assign(Object.assign({}, user), { _id: user._id.toString() });
+    return Object.assign(Object.assign({}, user._doc), { _id: user._id.toString() });
 });
 exports.deleteUser = deleteUser;
 // Updates a single user
-const updateUser = ({ userId, user: { avatar, email, name, password, gender } }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.default.findById(userId);
+const updateUser = ({ userId, user: { avatar, email, name, password, gender } }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield models_1.User.findById(userId);
     user.avatar = avatar;
     user.email = email;
     user.name = name;
     user.password = password;
     user.gender = gender;
     yield user.save();
-    return Object.assign(Object.assign({}, user), { _id: user._id.toString() });
+    return Object.assign(Object.assign({}, user._doc), { _id: user._id.toString() });
 });
 exports.updateUser = updateUser;

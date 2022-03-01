@@ -8,8 +8,10 @@ const express_validator_1 = require("express-validator");
 const index_1 = require("../services/index");
 const router = express_1.default.Router();
 router.post("/", [
-    (0, express_validator_1.check)("email").isEmpty(),
     (0, express_validator_1.check)("email").isEmail(),
+    (0, express_validator_1.check)("fullName").isLength({ min: 3 }),
+    (0, express_validator_1.check)("username").isLength({ min: 3 }),
+    (0, express_validator_1.check)("page").isLength({ min: 3 }),
     (0, express_validator_1.check)("password").isStrongPassword({
         minLength: 8,
         minLowercase: 1,

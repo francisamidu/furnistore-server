@@ -18,6 +18,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -28,11 +37,12 @@ const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = require("mongoose");
 const path_1 = require("path");
 const express_session_1 = __importDefault(require("express-session"));
+const seed_roles_1 = __importDefault(require("./api/v1/db/seed-roles"));
+const seed_users_1 = __importDefault(require("./api/v1/db/seed-users"));
 //Middlewares
 const middlewares_1 = require("./api/v1/middlewares");
 //Routes
 const routes_1 = require("./api/v1/routes");
-// import api from "./api/v1/routes/api";
 //Port config
 const PORT = process.env.PORT || 5000;
 //Env config
@@ -40,10 +50,7 @@ require("dotenv").config();
 //Init server app
 const app = (0, express_1.default)();
 //cors middleware config
-app.use((0, cors_1.default)({
-    credentials: true,
-    origin: "http://localhost:3000",
-}));
+app.use((0, cors_1.default)());
 //Session
 const sess = {
     resave: false,
@@ -62,11 +69,13 @@ app.use((0, express_1.json)());
 app.use((0, express_1.urlencoded)({ extended: false }));
 //API routes
 app.use("/auth", routes_1.auth);
-app.use("/api", routes_1.api);
-app.use("/graphql", (0, middlewares_1.use)(middlewares_1.graphql));
+app.use("/api", [routes_1.api]);
+app.use("/graphql", [(0, middlewares_1.use)(middlewares_1.graphql)]);
 app.use(middlewares_1.errorHandler);
-(0, mongoose_1.connect)(`mongodb://localhost:27017/${process.env.DB_NAME}`)
-    .then(() => {
-    app.listen(PORT, () => console.log(`Server app runnning on port: %d`, PORT));
-})
+(0, mongoose_1.connect)(`mongodb://localhost:27017/${process.env.DB_NAME || "furnistore"}`)
+    .then(() => __awaiter(void 0, void 0, void 0, function* () {
+    app.listen(PORT);
+    (0, seed_roles_1.default)().then(() => __awaiter(void 0, void 0, void 0, function* () { return yield (0, seed_users_1.default)(); }));
+    console.log("Server app runnning on port: %d", PORT);
+}))
     .catch((error) => console.log(`Failed to establish a database connection: ${error.message}`));

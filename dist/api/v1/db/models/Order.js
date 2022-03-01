@@ -6,11 +6,25 @@ const OrderSchema = new mongoose_1.Schema({
         type: mongoose_1.Types.ObjectId,
         required: true,
     },
+    orderId: {
+        type: Number,
+        required: true,
+    },
     products: [
         {
+            name: {
+                type: String,
+                required: true,
+                unique: true,
+            },
+            image: {
+                type: String,
+                required: true,
+            },
             productId: {
                 type: mongoose_1.Types.ObjectId,
                 required: true,
+                ref: "product",
             },
             quantity: {
                 type: Number,

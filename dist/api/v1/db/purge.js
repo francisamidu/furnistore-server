@@ -10,8 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
+const dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
 //Database connection
-(0, mongoose_1.connect)(`mongodb://localhost:27017/${process.env.DB_NAME}`)
+(0, mongoose_1.connect)(`mongodb://localhost:27017/${process.env.DB_NAME || "furnistore"}`)
     .then((res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield res.connections[0].dropDatabase();

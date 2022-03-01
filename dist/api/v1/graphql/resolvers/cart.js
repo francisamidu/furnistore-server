@@ -8,27 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateCart = exports.getCarts = exports.getCart = exports.deleteCart = exports.createCart = void 0;
-const Cart_1 = __importDefault(require("../../db/models/Cart"));
+const models_1 = require("../../db/models");
 // Gets all carts
-const getCarts = (context, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const carts = yield Cart_1.default.find({ isDeleted: false });
+const getCarts = (context, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield models_1.Cart.find({ isDeleted: false });
+    const carts = result.map((res) => (Object.assign(Object.assign({}, res._doc), { _id: res._id })));
     return carts;
 });
 exports.getCarts = getCarts;
 // Gets a single cart
-const getCart = ({ cartId }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const cart = yield Cart_1.default.findById(cartId);
-    return Object.assign({ _id: cart._id.toString() }, cart);
+const getCart = ({ cartId }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const cart = yield models_1.Cart.findById(cartId);
+    return Object.assign({ _id: cart._id.toString() }, cart._doc);
 });
 exports.getCart = getCart;
 // Create a single cart
-const createCart = ({ cart: { userId, products } }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const newCart = new Cart_1.default({
+const createCart = ({ cart: { userId, products } }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const newCart = new models_1.Cart({
         userId,
         products,
     });
@@ -37,8 +35,8 @@ const createCart = ({ cart: { userId, products } }, req) => __awaiter(void 0, vo
 });
 exports.createCart = createCart;
 // Deletes a single cart
-const deleteCart = ({ cartId }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const cart = yield Cart_1.default.findById(cartId);
+const deleteCart = ({ cartId }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const cart = yield models_1.Cart.findById(cartId);
     cart.isDeleted = true;
     yield cart.save();
     return {
@@ -47,10 +45,10 @@ const deleteCart = ({ cartId }, req) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.deleteCart = deleteCart;
 // Updates a single cart
-const updateCart = ({ cartId, userId, products }, req) => __awaiter(void 0, void 0, void 0, function* () {
-    const cart = yield Cart_1.default.findById(cartId);
+const updateCart = ({ cartId, userId, products }, _) => __awaiter(void 0, void 0, void 0, function* () {
+    const cart = yield models_1.Cart.findById(cartId);
     cart.products = products;
     yield cart.save();
-    return Object.assign(Object.assign({}, cart), { _id: cart._id.toString() });
+    return Object.assign(Object.assign({}, cart._doc), { _id: cart._id.toString() });
 });
 exports.updateCart = updateCart;

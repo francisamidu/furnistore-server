@@ -3,7 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateOTPService = exports.sendOTPService = exports.resetPasswordService = exports.registrationService = exports.logoutService = exports.loginService = exports.imageUploadService = void 0;
+exports.validateOTPService = exports.sendOTPService = exports.resetPasswordService = exports.registrationService = exports.logoutService = exports.loginService = exports.imageUploadService = exports.genTokenService = void 0;
+const genTokenService_1 = __importDefault(require("./genTokenService"));
+exports.genTokenService = genTokenService_1.default;
 const imageUploadService_1 = __importDefault(require("./imageUploadService"));
 exports.imageUploadService = imageUploadService_1.default;
 const loginService_1 = __importDefault(require("./loginService"));

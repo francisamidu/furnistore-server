@@ -1,12 +1,7 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 const UserSchema = new Schema(
   {
-    isAdmin: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
     isVerified: {
       type: Boolean,
       required: false,
@@ -31,7 +26,7 @@ const UserSchema = new Schema(
       required: false,
       default: "Male",
     },
-    name: {
+    username: {
       type: String,
       required: false,
     },
@@ -39,6 +34,12 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    roles: [
+      {
+        type: Types.ObjectId,
+        required: true,
+      },
+    ],
   },
   { timestamps: true }
 );

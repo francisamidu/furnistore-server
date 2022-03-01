@@ -38,6 +38,11 @@ const ProductSchema = new Schema({
     required: false,
     default: false,
   },
+  orders: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
 });
 
 export default model("product", ProductSchema);

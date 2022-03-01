@@ -1,9 +1,10 @@
-import User from "./models/User";
-import { connect, disconnect } from "mongoose";
+import { Role, User } from "./models";
+import { hashValue } from "../helpers";
 
 // Creates a test and admin account for testing purposes
 const seed = async () => {
   try {
+    const roles = await Role.find({});
     const isTestAccountAlreadyCreated = await User.findOne({
       email: "test@test.com",
     });
@@ -14,32 +15,31 @@ const seed = async () => {
       const newUser = new User({
         username: "test",
         email: "test@test.com",
-        password: "(Testaccount1)",
+        password: await hashValue("(Testaccount1)"),
       });
       await newUser.save();
-      console.log(`seeded test user account`);
-      disconnect();
+      console.log(`---USER---`);
+      console.log(`Seeded test user with id #${newUser._id}`);
+      console.log(`---USER---`);
     } else {
       console.log("User account already exists");
-      disconnect();
     }
-
     if (!isAdminAccountAlreadyCreated) {
       const newUser = new User({
         username: "admin",
         email: "admin@test.com",
-        password: "(Adminaccount1)",
+        password: await hashValue("(Adminaccount1)"),
+        roles,
       });
       await newUser.save();
-      console.log(`seeded test user account`);
-      disconnect();
+      console.log(`---ADMIN---`);
+      console.log(`Seeded admin user with id #${newUser._id}`);
+      console.log(`---ADMIN---`);
     } else {
       console.log("User account already exists");
-      disconnect();
     }
   } catch (error) {
     console.log(`Seed failed:${error}`);
-    disconnect();
   }
 };
 
@@ -53,11 +53,4 @@ async function runSeed() {
   }
 }
 
-//Database connection
-connect("mongodb://localhost:27017/furnistore", {
-  autoIndex: true,
-})
-  .then(() => {
-    runSeed();
-  })
-  .catch((error: any) => console.log(error));
+export default runSeed;

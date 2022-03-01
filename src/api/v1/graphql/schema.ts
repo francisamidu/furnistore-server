@@ -6,6 +6,19 @@ export default buildSchema(`
     scalar Object
 
     scalar Date
+    type Address{
+        _id: ID!
+        phone: String
+        city: String
+        address: String
+        userId: ID!
+    }
+    input AddressInput{
+        phone: String!
+        city: String!
+        address: String!
+        userId: ID!
+    }
 
     type Category{
         _id: ID!
@@ -13,6 +26,30 @@ export default buildSchema(`
     }
     input CategoryInput{
         title: String!      
+    }
+
+    type Cart{
+        _id: ID!
+        userId: ID
+        products: [Object]
+    }
+    input CartInput{
+        userId: ID!
+        products: [Object!]!
+    }
+
+    type Order{
+        _id: ID!
+        userId: ID
+        products: [Object]
+        amount: Int
+        address: Address
+    }
+    input OrderInput{
+        userId: ID!
+        products: [Object]!
+        amount: Int!
+        address: AddressInput!
     }
 
     type Product{
@@ -35,47 +72,19 @@ export default buildSchema(`
         quantity: Int!
         sizes: [String!]
         name: String!
-    }
+    }        
 
-    type Cart{
-        _id: ID!
-        userId: ID
-        products: [Object]
-    }
-    input CartInput{
-        userId: ID!
-        products: [Object!]!
-    }
-     
-    type Order{
-        _id: ID!
-        userId: ID
-        products: [Object]
-        amount: Int
-        address: Address
-    }
-    input OrderInput{
-        userId: ID!
-        products: [Object]!
-        amount: Int!
-        address: AddressInput!
-    }
-
-    type Address{
-        _id: ID!
-        phone: String
-        city: String
-        address: String
-    }
-    input AddressInput{
-        phone: String!
-        city: String!
-        address: String!
-    }
     type Stat{
         _id: ID
         total: Int
     }    
+
+    type Role {
+        _id: ID
+        code: Int
+        name: String
+        roles: [String]
+    }
 
     type User{
         _id: ID!
@@ -83,30 +92,36 @@ export default buildSchema(`
         isVerified: Boolean
         isAdmin: Boolean
         avatar: String
-        name: String
+        username: String
         gender: String
     }
     input UserInput{    
         avatar: String
         email: String
-        name: String
+        username: String
         password: String
         gender: String
     }
 
-    type Mutation{        
+    type Mutation{             
+
+        assignPermission(permissionId: ID!): Object 
+
+        createAddress(address:AddressInput):Address
         createCart(cart:CartInput): Cart!
         createOrder(order:OrderInput): Order!
         cancelOrder(orderId:ID!): Order!
         createProduct(product:ProductInput): Product!        
         createUser(user:UserInput): User!        
 
+        deleteAddress(addressId:ID!):Address
         deleteCategory(categoryId: ID!): Category!
         deleteCart(cartId: ID!): Cart!
         deleteOrder(orderId: ID!): Order!
         deleteProduct(productId: ID!): Product!
         deleteUser(userId: ID!): User!
 
+        updateAddress(addressId:ID!, address:AddressInput): Address
         updateCategory(categoryId: ID!,title: String!): Category!
         updateCart(cartId: ID!, cart:CartInput): Cart!
         updateOrder(orderId: ID!, order:OrderInput): Order!
@@ -114,11 +129,12 @@ export default buildSchema(`
         updateUser(userId: ID!,user: UserInput): User!
     }
     type Query{
-        
+        address(addressId:ID!): Address
         cart(cartId: ID!): Cart
         category(categoryId: ID!): Category
         product(productId: ID!): Product
         order(orderId: ID!): Order
+        role(roleId:ID!): Role
         user(userId: ID!): User
         
         orderByUser(userId: ID!): Order
@@ -126,11 +142,13 @@ export default buildSchema(`
         productsByCategories(categories: [String]): [Product]
         newProducts: [Product]
         
+        addresses:[Address]        
         carts: [Cart]        
         products: [Product]
         orders: [Order]
         ordersCancelled: [Order]
         ordersPending: [Order]
+        roles: [Role]
         users: [User]
 
         orderStats: [Stat]

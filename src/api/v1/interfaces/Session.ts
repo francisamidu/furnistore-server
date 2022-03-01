@@ -8,6 +8,7 @@ interface SessionCustom {
 }
 export default interface SessionRequest extends Request {
   session: Session & Partial<SessionData> & SessionCustom;
+  roles?: any[];
   user?: User | JwtPayload | string | null;
   file?: File | any | Partial<undefined>;
 }

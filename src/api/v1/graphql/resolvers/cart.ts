@@ -1,25 +1,26 @@
 import { Request } from "express";
-import Cart from "../../db/models/Cart";
+import { Cart } from "../../db/models";
 
 // Gets all carts
-const getCarts = async (context: any, req: Request) => {
-  const carts = await Cart.find({ isDeleted: false });
+const getCarts = async (context: any, _: Request) => {
+  const result = await Cart.find({ isDeleted: false });
+  const carts = result.map((res) => ({
+    ...res._doc,
+    _id: res._id,
+  }));
   return carts;
 };
 
 // Gets a single cart
-const getCart = async ({ cartId }: any, req: Request) => {
+const getCart = async ({ cartId }: any, _: Request) => {
   const cart = await Cart.findById(cartId);
   return {
     _id: cart._id.toString(),
-    ...cart,
+    ...cart._doc,
   };
 };
 // Create a single cart
-const createCart = async (
-  { cart: { userId, products } }: any,
-  req: Request
-) => {
+const createCart = async ({ cart: { userId, products } }: any, _: Request) => {
   const newCart = new Cart({
     userId,
     products,
@@ -32,7 +33,7 @@ const createCart = async (
 };
 
 // Deletes a single cart
-const deleteCart = async ({ cartId }: any, req: Request) => {
+const deleteCart = async ({ cartId }: any, _: Request) => {
   const cart = await Cart.findById(cartId);
   cart.isDeleted = true;
   await cart.save();
@@ -42,12 +43,12 @@ const deleteCart = async ({ cartId }: any, req: Request) => {
 };
 
 // Updates a single cart
-const updateCart = async ({ cartId, userId, products }: any, req: Request) => {
+const updateCart = async ({ cartId, userId, products }: any, _: Request) => {
   const cart = await Cart.findById(cartId);
   cart.products = products;
   await cart.save();
   return {
-    ...cart,
+    ...cart._doc,
     _id: cart._id.toString(),
   };
 };

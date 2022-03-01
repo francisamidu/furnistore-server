@@ -3,7 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateOTPController = exports.sendOTPController = exports.resetPasswordController = exports.registrationController = exports.logoutController = exports.loginController = exports.imageUploadController = void 0;
+exports.validateOTPController = exports.sendOTPController = exports.resetPasswordController = exports.registrationController = exports.logoutController = exports.loginController = exports.imageUploadController = exports.generateNewTokenController = void 0;
+const generateNewTokenController_1 = __importDefault(require("../controllers/generateNewTokenController"));
+exports.generateNewTokenController = generateNewTokenController_1.default;
 const imageUploadController_1 = __importDefault(require("../controllers/imageUploadController"));
 exports.imageUploadController = imageUploadController_1.default;
 const loginController_1 = __importDefault(require("../controllers/loginController"));

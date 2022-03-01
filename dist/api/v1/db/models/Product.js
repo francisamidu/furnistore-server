@@ -39,5 +39,10 @@ const ProductSchema = new mongoose_1.Schema({
         required: false,
         default: false,
     },
+    orders: {
+        type: Number,
+        required: false,
+        default: 0,
+    },
 });
 exports.default = (0, mongoose_1.model)("product", ProductSchema);

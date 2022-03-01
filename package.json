@@ -1,7 +1,7 @@
 {
   "name": "Furnistore-Api",
   "version": "1.0.0",
-  "description": "E-commerce backend built using Node,Express and MongoDB",
+  "description": "Furnistore E-Commerce API",
   "main": "app.js",
   "repository": "www.github.com/francisamidu/ecommerce-server",
   "author": "Francis Amidu",
@@ -51,9 +51,10 @@
     "typescript": "^4.5.2"
   },
   "scripts": {
-    "start": "./node_modules/.bin/tsc-watch --onSuccess \"nodemon dist/app.js\"",
+    "serve": "./node_modules/.bin/tsc-watch --onSuccess \"nodemon dist/app.js\"",
     "build": "tsc",
-    "seed:roles": "./dist/api/v1/db/seed-roles.js",
-    "seed:users": "./dist/api/v1/db/seed-users.js"
+    "seed:roles": "node ./dist/api/v1/db/seed-roles.js",
+    "seed:users": "node ./dist/api/v1/db/seed-users.js",
+    "purge": "node ./dist/api/v1/db/purge.js"
   }
 }

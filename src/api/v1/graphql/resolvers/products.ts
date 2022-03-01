@@ -1,9 +1,9 @@
 import { Request } from "express";
 
-import Product from "../../db/models/Product";
+import { Product } from "../../db/models";
 
 // Gets a single product
-const getProduct = async ({ productId }: any, req: Request) => {
+const getProduct = async ({ productId }: any, _: Request) => {
   const result = await Product.findById(productId);
   return {
     _id: result._id,
@@ -12,7 +12,7 @@ const getProduct = async ({ productId }: any, req: Request) => {
 };
 
 // Gets all products
-const getProducts = async (context: any, req: Request) => {
+const getProducts = async (context: any, _: Request) => {
   const result = await Product.find({ isDeleted: false });
   const products = result.map((product) => ({
     _id: product._id.toString(),
@@ -22,7 +22,7 @@ const getProducts = async (context: any, req: Request) => {
 };
 
 // Gets products by categories
-const getProductsByCategories = async (context: any, req: Request) => {
+const getProductsByCategories = async (context: any, _: Request) => {
   const result = await Product.find({
     isDeleted: false,
     categories: { $in: ["categories"] },
@@ -35,7 +35,7 @@ const getProductsByCategories = async (context: any, req: Request) => {
 };
 
 // Gets new Products
-const getNewProducts = async (context: any, req: Request) => {
+const getNewProducts = async (context: any, _: Request) => {
   const result = await Product.find({
     isDeleted: false,
   })
@@ -49,7 +49,7 @@ const getNewProducts = async (context: any, req: Request) => {
 };
 
 // Gets product statistics
-const getTrendingProductStats = async (context: any, req: Request) => {
+const getTrendingProductStats = async (context: any, _: Request) => {
   const date = new Date();
   const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
   const result = await Product.aggregate([
@@ -76,9 +76,13 @@ const getTrendingProductStats = async (context: any, req: Request) => {
       },
     },
   ]);
+  return result.map((r) => ({
+    ...r._doc,
+    _id: r._id,
+  }));
 };
 // Gets product statistics
-const getProductStats = async (context: any, req: Request) => {
+const getProductStats = async (context: any, _: Request) => {
   const date = new Date();
   const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
   const result = await Product.aggregate([
@@ -126,7 +130,7 @@ const createProduct = async (
       categories,
     },
   }: any,
-  req: Request
+  _: Request
 ) => {
   const newProduct = new Product({
     categories,
@@ -146,11 +150,11 @@ const createProduct = async (
 };
 
 // Deletes a single product
-const deleteProduct = async ({ productId }: any, req: Request) => {
+const deleteProduct = async ({ productId }: any, _: Request) => {
   const product = await Product.findById(productId);
   product.isDeleted = true;
   const deletedProduct = await product.save();
-  return { ...deletedProduct._doc };
+  return { ...deletedProduct._doc, _id: deletedProduct._id };
 };
 
 // Updates a single product
@@ -168,7 +172,7 @@ const updateProduct = async (
       categories,
     },
   }: any,
-  req: Request
+  _: Request
 ) => {
   const product = await Product.findById(productId);
   product.categories = categories;
@@ -194,5 +198,6 @@ export {
   getProducts,
   getProductStats,
   getProductsByCategories,
+  getTrendingProductStats,
   updateProduct,
 };

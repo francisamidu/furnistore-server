@@ -4,7 +4,8 @@ import cors from "cors";
 import { connect } from "mongoose";
 import { join } from "path";
 import session from "express-session";
-import runSeed from "./api/v1/db/seed-roles";
+import seedRoles from "./api/v1/db/seed-roles";
+import seedUsers from "./api/v1/db/seed-users";
 
 //Middlewares
 import { authenticate, graphql, errorHandler, use } from "./api/v1/middlewares";
@@ -22,12 +23,7 @@ require("dotenv").config();
 const app = express();
 
 //cors middleware config
-app.use(
-  cors({
-    credentials: true,
-    origin: "http://localhost:3000",
-  })
-);
+app.use(cors());
 
 //Session
 const sess = {
@@ -52,17 +48,16 @@ app.use(urlencoded({ extended: false }));
 
 //API routes
 app.use("/auth", auth);
-app.use("/api", api);
-app.use("/graphql", use(graphql));
+app.use("/api", [api]);
+app.use("/graphql", [use(graphql)]);
 
 app.use(errorHandler);
 
-connect(`mongodb://localhost:27017/${process.env.DB_NAME}`)
-  .then(() => {
-    runSeed();
-    app.listen(PORT, () =>
-      console.log(`Server app runnning on port: %d`, PORT)
-    );
+connect(`mongodb://localhost:27017/${process.env.DB_NAME || "furnistore"}`)
+  .then(async () => {
+    app.listen(PORT);
+    seedRoles().then(async () => await seedUsers());
+    console.log("Server app runnning on port: %d", PORT);
   })
   .catch((error: Error) =>
     console.log(`Failed to establish a database connection: ${error.message}`)

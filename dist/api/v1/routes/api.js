@@ -5,4 +5,5 @@ const controllers_1 = require("../controllers");
 const middlewares_1 = require("../middlewares");
 // Register routes
 router.use("/upload-image", (0, middlewares_1.use)(controllers_1.imageUploadController));
+router.use("/refresh-token", (0, middlewares_1.use)(controllers_1.generateNewTokenController));
 exports.default = router;

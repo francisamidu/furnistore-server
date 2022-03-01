@@ -1,12 +1,12 @@
 import { Request } from "express";
 
-import User from "../../db/models/User";
+import { User } from "../../db/models";
 import { hashValue } from "../../helpers";
 
 //Creates an individual user
 const createUser = async (
   { user: { avatar, email, name, password, gender } }: any,
-  req: Request
+  _: Request
 ) => {
   const hashedPassword = await hashValue(password);
   const user = new User({
@@ -24,7 +24,7 @@ const createUser = async (
 };
 
 // Gets user statistics
-const getUserStats = async (context: any, req: Request) => {
+const getUserStats = async (context: any, _: Request) => {
   const date = new Date();
   const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
 
@@ -60,7 +60,7 @@ const getUserStats = async (context: any, req: Request) => {
 };
 
 // Gets a single User
-const getUser = async ({ userId }: any, req: Request) => {
+const getUser = async ({ userId }: any, _: Request) => {
   const result = await User.findById(userId);
   return {
     _id: result._id,
@@ -69,7 +69,7 @@ const getUser = async ({ userId }: any, req: Request) => {
 };
 
 // Gets all users
-const getUsers = async (context: any, req: Request) => {
+const getUsers = async (context: any, _: Request) => {
   const result = await User.find({ isDeleted: false });
   const users = result.map((user) => ({
     _id: user._id.toString(),
@@ -79,12 +79,12 @@ const getUsers = async (context: any, req: Request) => {
 };
 
 // Deletes a single user
-const deleteUser = async ({ userId }: any, req: Request) => {
+const deleteUser = async ({ userId }: any, _: Request) => {
   const user = await User.findById(userId);
   user.isDeleted = true;
   await user.save();
   return {
-    ...user,
+    ...user._doc,
     _id: user._id.toString(),
   };
 };
@@ -92,7 +92,7 @@ const deleteUser = async ({ userId }: any, req: Request) => {
 // Updates a single user
 const updateUser = async (
   { userId, user: { avatar, email, name, password, gender } }: any,
-  req: Request
+  _: Request
 ) => {
   const user = await User.findById(userId);
   user.avatar = avatar;
@@ -102,7 +102,7 @@ const updateUser = async (
   user.gender = gender;
   await user.save();
   return {
-    ...user,
+    ...user._doc,
     _id: user._id.toString(),
   };
 };
