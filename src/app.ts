@@ -53,7 +53,7 @@ app.use("/graphql", [use(graphql)]);
 
 app.use(errorHandler);
 
-connect(`mongodb://localhost:27017/${process.env.DB_NAME || "furnistore"}`)
+connect(`${process.env.MONGODB_URL || "mongodb://localhost:27017/furnistore"}`)
   .then(async () => {
     app.listen(PORT);
     seedRoles().then(async () => await seedUsers());
