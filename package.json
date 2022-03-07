@@ -51,7 +51,8 @@
     "typescript": "^4.5.2"
   },
   "scripts": {
-    "serve": "./node_modules/.bin/tsc-watch --onSuccess \"nodemon dist/app.js\"",
+    "start:dev": "./node_modules/.bin/tsc-watch --onSuccess \"nodemon dist/app.js\"",
+    "start": "node dist/app.js",
     "build": "tsc",
     "seed:roles": "node ./dist/api/v1/db/seed-roles.js",
     "seed:users": "node ./dist/api/v1/db/seed-users.js",
