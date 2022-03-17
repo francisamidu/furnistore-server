@@ -13,14 +13,18 @@ import { authenticate, graphql, errorHandler, use } from "./api/v1/middlewares";
 //Routes
 import { auth, api } from "./api/v1/routes";
 
-//Port config
-const PORT = process.env.PORT || 5000;
-
 //Env config
 require("dotenv").config();
 
 //Init server app
 const app = express();
+
+//Port config
+const PORT = process.env.PORT || 5000;
+const MONGODB_URL =
+  app.get("env") === "production"
+    ? process.env.MONGODB_URL
+    : "mongodb://localhost:27017/furnistore";
 
 //cors middleware config
 app.use(cors());
@@ -53,7 +57,7 @@ app.use("/graphql", [use(graphql)]);
 
 app.use(errorHandler);
 
-connect(`${process.env.MONGODB_URL || "mongodb://localhost:27017/furnistore"}`)
+connect(`${MONGODB_URL}`)
   .then(async () => {
     app.listen(PORT);
     seedRoles().then(async () => await seedUsers());

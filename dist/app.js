@@ -43,12 +43,15 @@ const seed_users_1 = __importDefault(require("./api/v1/db/seed-users"));
 const middlewares_1 = require("./api/v1/middlewares");
 //Routes
 const routes_1 = require("./api/v1/routes");
-//Port config
-const PORT = process.env.PORT || 5000;
 //Env config
 require("dotenv").config();
 //Init server app
 const app = (0, express_1.default)();
+//Port config
+const PORT = process.env.PORT || 5000;
+const MONGODB_URL = app.get("env") === "production"
+    ? process.env.MONGODB_URL
+    : "mongodb://localhost:27017/furnistore";
 //cors middleware config
 app.use((0, cors_1.default)());
 //Session
@@ -72,7 +75,7 @@ app.use("/auth", routes_1.auth);
 app.use("/api", [routes_1.api]);
 app.use("/graphql", [(0, middlewares_1.use)(middlewares_1.graphql)]);
 app.use(middlewares_1.errorHandler);
-(0, mongoose_1.connect)(`mongodb://localhost:27017/${process.env.DB_NAME || "furnistore"}`)
+(0, mongoose_1.connect)(`${MONGODB_URL}`)
     .then(() => __awaiter(void 0, void 0, void 0, function* () {
     app.listen(PORT);
     (0, seed_roles_1.default)().then(() => __awaiter(void 0, void 0, void 0, function* () { return yield (0, seed_users_1.default)(); }));
